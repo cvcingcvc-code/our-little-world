@@ -1,73 +1,80 @@
-import { siteConfig } from "@/config/site";
-import { Heart, Sparkles, ShieldCheck, Compass, GitBranch, Layers } from "lucide-react";
+"use client";
 
-export default function Home() {
+import React, { useState, useEffect } from "react";
+import { useApp } from "@/context/AppContext";
+import Navigation, { NavTab } from "@/components/common/Navigation";
+import Snowfall from "@/components/common/Snowfall";
+import BackgroundAudio from "@/components/common/BackgroundAudio";
+import OpeningCurtain from "@/components/common/OpeningCurtain";
+
+// 10 大核心业务模块视图
+import HomeView from "@/components/views/HomeView";
+import GalleryView from "@/components/views/GalleryView";
+import FoodView from "@/components/views/FoodView";
+import GiftsView from "@/components/views/GiftsView";
+import WishesView from "@/components/views/WishesView";
+import TimelineView from "@/components/views/TimelineView";
+import StarryView from "@/components/views/StarryView";
+import AchievementsView from "@/components/views/AchievementsView";
+import DiaryView from "@/components/views/DiaryView";
+import TimeCapsuleView from "@/components/views/TimeCapsuleView";
+import InteractiveView from "@/components/views/InteractiveView";
+import { Heart, Sparkles } from "lucide-react";
+
+export default function AppHome() {
+  const { isNightMode } = useApp();
+  const [activeTab, setActiveTab] = useState<NavTab>("home");
+
+  // 同步 dark 属性到 html 根元素
+  useEffect(() => {
+    if (isNightMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [isNightMode]);
+
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 via-sky-50/30 to-indigo-50/20 text-slate-700 flex flex-col items-center justify-center p-6 sm:p-12">
-      <div className="max-w-2xl w-full bg-white/70 backdrop-blur-md border border-slate-200/80 rounded-2xl p-8 sm:p-10 shadow-sm space-y-8">
-        {/* 顶部标题区 */}
-        <div className="text-center space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-sky-100/80 text-sky-800 border border-sky-200/50">
-            <Sparkles className="w-3.5 h-3.5 text-sky-600" />
-            <span>私人恋爱纪念空间 · 基础架构已就绪</span>
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-light tracking-tight text-slate-800">
-            {siteConfig.name}
-          </h1>
-          <p className="text-sm sm:text-base text-slate-500 font-light">
-            {siteConfig.mainMotto}
-          </p>
-          <p className="text-xs sm:text-sm text-slate-400">
-            {siteConfig.subMotto}
-          </p>
-        </div>
+    <div className="min-h-screen flex flex-col justify-between transition-colors duration-500 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100">
+      {/* 沉浸式冬日开场问候（可跳过） */}
+      <OpeningCurtain />
 
-        {/* 核心规划模块预览清单 */}
-        <div className="space-y-3">
-          <h2 className="text-xs uppercase tracking-wider font-semibold text-slate-400 flex items-center gap-1.5">
-            <Layers className="w-3.5 h-3.5" /> 核心功能规划与模块骨架
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex items-start gap-3">
-              <Heart className="w-4 h-4 text-rose-400 mt-0.5 shrink-0" />
-              <div>
-                <p className="font-medium text-slate-800">恋爱首页与纪念日</p>
-                <p className="text-xs text-slate-500">唯美冬日治愈氛围、相恋天数倒计时</p>
-              </div>
-            </div>
-            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex items-start gap-3">
-              <Compass className="w-4 h-4 text-sky-400 mt-0.5 shrink-0" />
-              <div>
-                <p className="font-medium text-slate-800">恋爱时间轴 & 愿望清单</p>
-                <p className="text-xs text-slate-500">点滴足迹、心动时刻与共同奔赴的梦想</p>
-              </div>
-            </div>
-            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex items-start gap-3">
-              <Layers className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" />
-              <div>
-                <p className="font-medium text-slate-800">照片收藏馆 & 恋爱日记</p>
-                <p className="text-xs text-slate-500">拍立得/手账式画廊，温存文字记录</p>
-              </div>
-            </div>
-            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex items-start gap-3">
-              <ShieldCheck className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-              <div>
-                <p className="font-medium text-slate-800">私人访问权限保护</p>
-                <p className="text-xs text-slate-500">私密相册与日记密码校验与防泄露</p>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* 缓慢飘落雪花粒子（可随时在导航栏关闭或进入节能模式） */}
+      <Snowfall />
 
-        {/* 状态说明与部署信息 */}
-        <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
-          <div className="flex items-center gap-1.5">
-            <GitBranch className="w-3.5 h-3.5 text-slate-500" />
-            <span>GitHub 仓库已连接: cvcingcvc-code/our-little-world</span>
-          </div>
-          <span className="text-slate-400">Vercel Ready</span>
+      {/* 纯净治愈系背景音乐控制器（Web Audio API 无断流） */}
+      <BackgroundAudio />
+
+      {/* 顶部主导航与移动端控制中心 */}
+      <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+
+      {/* 核心视图渲染区 */}
+      <main className="flex-1 pb-24 lg:pb-12">
+        {activeTab === "home" && <HomeView onNavigate={setActiveTab} />}
+        {activeTab === "gallery" && <GalleryView />}
+        {activeTab === "food" && <FoodView />}
+        {activeTab === "gifts" && <GiftsView />}
+        {activeTab === "wishes" && <WishesView />}
+        {activeTab === "timeline" && <TimelineView />}
+        {activeTab === "diary" && <DiaryView />}
+        {activeTab === "starry" && <StarryView />}
+        {activeTab === "achievements" && <AchievementsView />}
+        {activeTab === "capsule" && <TimeCapsuleView />}
+        {activeTab === "interactive" && <InteractiveView />}
+      </main>
+
+      {/* 优雅温暖的页脚 */}
+      <footer className="border-t border-slate-200/60 dark:border-slate-800/60 py-6 px-4 text-center text-xs text-slate-400 dark:text-slate-500 space-y-2">
+        <div className="flex items-center justify-center gap-1.5 font-light">
+          <span>Our Little World</span>
+          <span>·</span>
+          <span>专属两人的数字恋爱博物馆</span>
+          <Heart className="w-3.5 h-3.5 text-rose-400 fill-rose-400/60" />
         </div>
-      </div>
-    </main>
+        <p className="text-[11px] text-slate-400/80">
+          冬天很冷，幸好有你。想把与你有关的每一个瞬间，都偷偷收藏。
+        </p>
+      </footer>
+    </div>
   );
 }

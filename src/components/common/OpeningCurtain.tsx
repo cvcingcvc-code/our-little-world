@@ -10,7 +10,6 @@ export default function OpeningCurtain({ onFinish }: { onFinish?: () => void }) 
   const [fadeOut, setFadeOut] = useState<boolean>(false);
 
   useEffect(() => {
-    // 检查是否本次会话已经看过开场
     const hasSeen = sessionStorage.getItem("olw_opening_seen");
     if (hasSeen === "true") {
       setShow(false);
@@ -35,47 +34,49 @@ export default function OpeningCurtain({ onFinish }: { onFinish?: () => void }) 
         fadeOut ? "opacity-0 scale-105 pointer-events-none" : "opacity-100 scale-100"
       }`}
     >
-      {/* 背景图与微光渐变层 */}
+      {/* 4K 超高清大图背景与电影级慢镜微缩放 */}
       <div className="absolute inset-0 bg-slate-950">
         <Image
-          src="/winter-anime-hero.jpg"
+          src="/winter-hero-hd.jpg"
           alt="冬日恋歌主视觉"
           fill
           priority
-          className="object-cover object-center filter brightness-60 scale-105 animate-pulse duration-[7000ms]"
+          quality={100}
+          className="object-cover object-center filter brightness-[0.8] scale-100 animate-pulse duration-[10000ms]"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/60 to-slate-950/80" />
+        {/* 电影级晕映渐变 */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/50 to-slate-950/80" />
       </div>
 
-      {/* 核心文案卡片 */}
-      <div className="relative z-10 max-w-xl mx-4 text-center px-6 py-10 rounded-3xl bg-slate-900/40 backdrop-blur-xl border border-white/15 shadow-2xl space-y-6">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-light tracking-widest text-sky-200 bg-sky-500/10 border border-sky-400/30">
+      {/* 核心文案水晶卡片 */}
+      <div className="relative z-10 max-w-xl mx-4 text-center px-8 py-12 rounded-[2.5rem] bg-slate-950/50 backdrop-blur-2xl border border-white/20 shadow-[0_0_50px_rgba(0,0,0,0.5)] space-y-7 animate-fadeIn">
+        <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-light tracking-[0.25em] text-sky-200 bg-sky-500/15 border border-sky-400/30 shadow-inner">
           <Sparkles className="w-3.5 h-3.5 text-sky-300 animate-spin" />
-          <span>WINTER LOVE · 私人恋爱纪念博物馆</span>
+          <span>WINTER LOVE · 殿堂级数字恋爱馆</span>
         </div>
 
-        <div className="space-y-3">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extralight tracking-wider text-slate-50 drop-shadow-md">
+        <div className="space-y-3.5">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extralight tracking-wider text-white drop-shadow-lg font-serif">
             {siteConfig.mainMotto}
           </h1>
-          <p className="text-sm sm:text-base text-slate-300 font-light tracking-wide leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-200/90 font-light tracking-widest leading-relaxed">
             {siteConfig.subMotto}
           </p>
         </div>
 
-        <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+        <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3.5">
           <button
             onClick={handleEnter}
-            className="w-full sm:w-auto px-7 py-3 rounded-full text-sm font-medium tracking-wide text-white bg-gradient-to-r from-rose-500/80 to-indigo-600/80 hover:from-rose-500 hover:to-indigo-600 border border-white/20 shadow-lg hover:shadow-rose-500/25 transition-all duration-300 flex items-center justify-center gap-2 group cursor-pointer"
+            className="w-full sm:w-auto px-8 py-3.5 rounded-full text-xs sm:text-sm font-medium tracking-wider text-white bg-gradient-to-r from-rose-500/90 via-pink-500/90 to-indigo-600/90 hover:from-rose-500 hover:to-indigo-600 border border-white/30 shadow-[0_0_20px_rgba(244,63,94,0.35)] hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2.5 group cursor-pointer"
           >
-            <Heart className="w-4 h-4 text-rose-200 fill-rose-300 group-hover:scale-110 transition-transform" />
+            <Heart className="w-4 h-4 text-rose-200 fill-rose-200 group-hover:scale-125 transition-transform" />
             <span>开启我们的小世界</span>
-            <ArrowRight className="w-4 h-4 text-white/70 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 text-white/80 group-hover:translate-x-1 transition-transform" />
           </button>
 
           <button
             onClick={handleEnter}
-            className="text-xs text-slate-400 hover:text-slate-200 px-4 py-2 transition-colors cursor-pointer"
+            className="text-xs text-slate-400 hover:text-white px-5 py-2.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer border-none bg-transparent"
           >
             直接跳过
           </button>

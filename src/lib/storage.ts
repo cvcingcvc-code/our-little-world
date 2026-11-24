@@ -1,6 +1,7 @@
 /**
  * Our Little World - 核心数据持久化与业务逻辑服务
- * 支持双人模式真实 CRUD、权限过滤、真实照片手机/电脑端持久化保存
+ * 坚持真实性原则：不预设虚构恋爱经历与假照片
+ * 支持单机持久化存储，并预留云端数据库与图床对接接口
  */
 
 import {
@@ -18,35 +19,33 @@ import {
   TimelineEvent,
 } from "@/types";
 import {
-  demoPhotos,
-  demoFoodRecords,
-  demoGiftRecords,
-  demoWishItems,
-  demoDiaries,
-  demoStarMemories,
-  demoTimeCapsules,
-  demoAnniversaries,
-  demoNotes,
-  demoRandomDates,
+  initialPhotos,
+  initialFoodRecords,
+  initialGiftRecords,
+  initialWishTemplates,
+  initialDiaries,
+  initialStarMemories,
+  initialTimeCapsules,
+  initialAnniversaries,
+  initialNotes,
+  defaultRandomDates,
 } from "@/data/mockData";
-import { siteConfig } from "@/config/site";
+import { getActiveSiteConfig } from "@/config/site";
 
 const STORAGE_KEYS = {
-  PHOTOS: "olw_store_photos_v1",
-  FOOD: "olw_store_food_v1",
-  GIFTS: "olw_store_gifts_v1",
-  WISHES: "olw_store_wishes_v1",
-  DIARIES: "olw_store_diaries_v1",
-  STARS: "olw_store_stars_v1",
-  CAPSULES: "olw_store_capsules_v1",
-  ANNIVERSARIES: "olw_store_anniversaries_v1",
-  NOTES: "olw_store_notes_v1",
-  MISS_COUNT: "olw_store_miss_count_v1",
-  AUTH_TOKEN: "olw_auth_state_v1",
-  CUSTOM_CONFIG: "olw_custom_config_v1",
+  PHOTOS: "olw_store_photos_v2",
+  FOOD: "olw_store_food_v2",
+  GIFTS: "olw_store_gifts_v2",
+  WISHES: "olw_store_wishes_v2",
+  DIARIES: "olw_store_diaries_v2",
+  STARS: "olw_store_stars_v2",
+  CAPSULES: "olw_store_capsules_v2",
+  ANNIVERSARIES: "olw_store_anniversaries_v2",
+  NOTES: "olw_store_notes_v2",
+  MISS_COUNT: "olw_store_miss_count_v2",
 };
 
-// 辅助安全读取
+// 安全读取本地存储
 function safeGetItem<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
   try {
@@ -59,7 +58,7 @@ function safeGetItem<T>(key: string, fallback: T): T {
   }
 }
 
-// 辅助安全写入
+// 安全保存本地存储
 function safeSetItem<T>(key: string, value: T): void {
   if (typeof window === "undefined") return;
   try {
@@ -69,9 +68,9 @@ function safeSetItem<T>(key: string, value: T): void {
   }
 }
 
-// ==================== 1. 照片收藏馆 CRUD ====================
+// ==================== 1. 照片收藏馆 ====================
 export function getPhotos(isAuthenticated = false): PhotoItem[] {
-  const all = safeGetItem<PhotoItem[]>(STORAGE_KEYS.PHOTOS, demoPhotos);
+  const all = safeGetItem<PhotoItem[]>(STORAGE_KEYS.PHOTOS, initialPhotos);
   if (isAuthenticated) return all;
   return all.filter((p) => !p.isPrivate);
 }
@@ -80,12 +79,10 @@ export function savePhoto(photo: Omit<PhotoItem, "id" | "createdAt"> & { id?: st
   const current = getPhotos(true);
   const now = Date.now();
   if (photo.id) {
-    // 更新已有
     const updated = current.map((p) => (p.id === photo.id ? { ...p, ...photo } : p));
     safeSetItem(STORAGE_KEYS.PHOTOS, updated);
     return { ...photo, id: photo.id, createdAt: now } as PhotoItem;
   }
-  // 新增
   const newPhoto: PhotoItem = {
     ...photo,
     id: `photo-${now}-${Math.random().toString(36).substring(2, 7)}`,
@@ -115,9 +112,9 @@ export function togglePhotoFavorite(id: string): boolean {
   return nextState;
 }
 
-// ==================== 2. 美食日记 CRUD ====================
+// ==================== 2. 美食日记 ====================
 export function getFoodRecords(isAuthenticated = false): FoodRecord[] {
-  const all = safeGetItem<FoodRecord[]>(STORAGE_KEYS.FOOD, demoFoodRecords);
+  const all = safeGetItem<FoodRecord[]>(STORAGE_KEYS.FOOD, initialFoodRecords);
   if (isAuthenticated) return all;
   return all.filter((f) => !f.isPrivate);
 }
@@ -151,9 +148,9 @@ export function toggleFoodWishlist(id: string): void {
   safeSetItem(STORAGE_KEYS.FOOD, updated);
 }
 
-// ==================== 3. 礼物与惊喜博物馆 CRUD ====================
+// ==================== 3. 礼物与惊喜博物馆 ====================
 export function getGiftRecords(isAuthenticated = false): GiftRecord[] {
-  const all = safeGetItem<GiftRecord[]>(STORAGE_KEYS.GIFTS, demoGiftRecords);
+  const all = safeGetItem<GiftRecord[]>(STORAGE_KEYS.GIFTS, initialGiftRecords);
   if (isAuthenticated) return all;
   return all.filter((g) => !g.isPrivate);
 }
@@ -181,9 +178,9 @@ export function deleteGiftRecord(id: string): void {
   safeSetItem(STORAGE_KEYS.GIFTS, current.filter((g) => g.id !== id));
 }
 
-// ==================== 4. 100件小事（愿望清单） CRUD ====================
+// ==================== 4. 100件小事 ====================
 export function getWishItems(isAuthenticated = false): WishItem[] {
-  const all = safeGetItem<WishItem[]>(STORAGE_KEYS.WISHES, demoWishItems);
+  const all = safeGetItem<WishItem[]>(STORAGE_KEYS.WISHES, initialWishTemplates);
   if (isAuthenticated) return all;
   return all.filter((w) => !w.isPrivate);
 }
@@ -232,9 +229,9 @@ export function deleteWishItem(id: string): void {
   safeSetItem(STORAGE_KEYS.WISHES, current.filter((w) => w.id !== id));
 }
 
-// ==================== 5. 恋爱日记 CRUD ====================
+// ==================== 5. 恋爱日记 ====================
 export function getDiaries(isAuthenticated = false): DiaryEntry[] {
-  const all = safeGetItem<DiaryEntry[]>(STORAGE_KEYS.DIARIES, demoDiaries);
+  const all = safeGetItem<DiaryEntry[]>(STORAGE_KEYS.DIARIES, initialDiaries);
   if (isAuthenticated) return all;
   return all.filter((d) => !d.isPrivate);
 }
@@ -262,9 +259,9 @@ export function deleteDiary(id: string): void {
   safeSetItem(STORAGE_KEYS.DIARIES, current.filter((d) => d.id !== id));
 }
 
-// ==================== 6. 专属恋爱星空 CRUD ====================
+// ==================== 6. 专属恋爱星空 ====================
 export function getStarMemories(isAuthenticated = false): StarMemory[] {
-  const all = safeGetItem<StarMemory[]>(STORAGE_KEYS.STARS, demoStarMemories);
+  const all = safeGetItem<StarMemory[]>(STORAGE_KEYS.STARS, initialStarMemories);
   if (isAuthenticated) return all;
   return all.filter((s) => !s.isPrivate);
 }
@@ -290,14 +287,12 @@ export function deleteStarMemory(id: string): void {
   safeSetItem(STORAGE_KEYS.STARS, current.filter((s) => s.id !== id));
 }
 
-// ==================== 7. 时光信箱 CRUD ====================
+// ==================== 7. 时光信箱 ====================
 export function getTimeCapsules(isAuthenticated = false): TimeCapsule[] {
-  const all = safeGetItem<TimeCapsule[]>(STORAGE_KEYS.CAPSULES, demoTimeCapsules);
-  const now = new Date().toISOString();
+  const all = safeGetItem<TimeCapsule[]>(STORAGE_KEYS.CAPSULES, initialTimeCapsules);
   return all
     .filter((c) => (isAuthenticated ? true : !c.isPrivate))
     .map((c) => {
-      // 检查是否到期：如果当前时间超过 unlockAt，则解除 isSealed 封印
       const isPast = new Date(c.unlockAt).getTime() <= new Date().getTime();
       return {
         ...c,
@@ -307,7 +302,7 @@ export function getTimeCapsules(isAuthenticated = false): TimeCapsule[] {
 }
 
 export function saveTimeCapsule(capsule: Omit<TimeCapsule, "id" | "isSealed"> & { id?: string }): TimeCapsule {
-  const current = safeGetItem<TimeCapsule[]>(STORAGE_KEYS.CAPSULES, demoTimeCapsules);
+  const current = safeGetItem<TimeCapsule[]>(STORAGE_KEYS.CAPSULES, initialTimeCapsules);
   const isPast = new Date(capsule.unlockAt).getTime() <= new Date().getTime();
   const fullCapsule: TimeCapsule = {
     ...capsule,
@@ -330,18 +325,18 @@ export function getInteractiveState(): {
   notes: SecretNote[];
   randomDates: RandomDateIdea[];
 } {
-  const miss = safeGetItem<{ p1: number; p2: number }>(STORAGE_KEYS.MISS_COUNT, { p1: 120, p2: 135 });
-  const notes = safeGetItem<SecretNote[]>(STORAGE_KEYS.NOTES, demoNotes);
+  const miss = safeGetItem<{ p1: number; p2: number }>(STORAGE_KEYS.MISS_COUNT, { p1: 0, p2: 0 });
+  const notes = safeGetItem<SecretNote[]>(STORAGE_KEYS.NOTES, initialNotes);
   return {
     missCountPartner1: miss.p1,
     missCountPartner2: miss.p2,
     notes,
-    randomDates: demoRandomDates,
+    randomDates: defaultRandomDates,
   };
 }
 
 export function addMissCount(partner: 'partner1' | 'partner2'): { p1: number; p2: number } {
-  const miss = safeGetItem<{ p1: number; p2: number }>(STORAGE_KEYS.MISS_COUNT, { p1: 120, p2: 135 });
+  const miss = safeGetItem<{ p1: number; p2: number }>(STORAGE_KEYS.MISS_COUNT, { p1: 0, p2: 0 });
   if (partner === 'partner1') miss.p1 += 1;
   else miss.p2 += 1;
   safeSetItem(STORAGE_KEYS.MISS_COUNT, miss);
@@ -349,7 +344,7 @@ export function addMissCount(partner: 'partner1' | 'partner2'): { p1: number; p2
 }
 
 export function addSecretNote(author: string, content: string, color?: string): SecretNote {
-  const current = safeGetItem<SecretNote[]>(STORAGE_KEYS.NOTES, demoNotes);
+  const current = safeGetItem<SecretNote[]>(STORAGE_KEYS.NOTES, initialNotes);
   const newNote: SecretNote = {
     id: `note-${Date.now()}`,
     author,
@@ -371,9 +366,14 @@ export function calculateAchievements(isAuthenticated = false): Achievement[] {
   const wishes = getWishItems(isAuthenticated);
   const diaries = getDiaries(isAuthenticated);
 
-  // 计算相恋天数
-  const start = new Date(siteConfig.startDate).getTime();
-  const diffDays = Math.max(1, Math.floor((Date.now() - start) / (1000 * 60 * 60 * 24)));
+  const cfg = getActiveSiteConfig();
+  let diffDays = 0;
+  if (cfg.startDate) {
+    const start = new Date(cfg.startDate).getTime();
+    if (!isNaN(start) && Date.now() >= start) {
+      diffDays = Math.max(1, Math.floor((Date.now() - start) / (1000 * 60 * 60 * 24)));
+    }
+  }
 
   const completedWishesCount = wishes.filter((w) => w.status === "completed").length;
   const wishFoodsCount = foods.filter((f) => !f.isWishlist).length;
@@ -381,16 +381,16 @@ export function calculateAchievements(isAuthenticated = false): Achievement[] {
   const definitions: Omit<Achievement, "currentValue" | "isUnlocked">[] = [
     {
       id: "ach-1",
-      title: "初次心动",
-      description: "开启专属两人的小世界，记录相恋起点",
+      title: "相恋启程",
+      description: "在小世界中记录下你们相恋的起点",
       category: "days",
       icon: "HeartHandshake",
-      conditionDescription: "相恋天数达到 1 天",
+      conditionDescription: "设定恋爱纪念日起点",
       targetValue: 1,
     },
     {
       id: "ach-2",
-      title: "百日筑梦",
+      title: "百日相伴",
       description: "走过彼此陪伴的第一个一百天",
       category: "days",
       icon: "CalendarHeart",
@@ -399,7 +399,7 @@ export function calculateAchievements(isAuthenticated = false): Achievement[] {
     },
     {
       id: "ach-3",
-      title: "周年四季",
+      title: "携手四季",
       description: "看遍春夏秋冬，一整年的温柔陪伴",
       category: "days",
       icon: "Crown",
@@ -409,16 +409,16 @@ export function calculateAchievements(isAuthenticated = false): Achievement[] {
     {
       id: "ach-4",
       title: "初次定格",
-      description: "在可爱照片馆收藏第一张美好瞬间",
+      description: "在可爱相册馆收藏第一张真实回忆合影",
       category: "gallery",
       icon: "Camera",
-      conditionDescription: "保存至少 1 张回忆照片",
+      conditionDescription: "上传并保存至少 1 张真实照片",
       targetValue: 1,
     },
     {
       id: "ach-5",
-      title: "回忆胶片室",
-      description: "胶片显影，累计收藏超过 5 张照片",
+      title: "光影胶片室",
+      description: "点滴累积，记录 5 个精彩瞬间",
       category: "gallery",
       icon: "Film",
       conditionDescription: "保存至少 5 张回忆照片",
@@ -426,8 +426,8 @@ export function calculateAchievements(isAuthenticated = false): Achievement[] {
     },
     {
       id: "ach-6",
-      title: "人间烟火伴侣",
-      description: "一同打卡 3 家美味餐厅",
+      title: "美食搭子",
+      description: "一同探店并打卡 3 家美味餐厅",
       category: "food",
       icon: "UtensilsCrossed",
       conditionDescription: "记录至少 3 顿美食",
@@ -435,11 +435,11 @@ export function calculateAchievements(isAuthenticated = false): Achievement[] {
     },
     {
       id: "ach-7",
-      title: "惊喜制造家",
-      description: "用心记录彼此赠予的温暖礼物与惊喜",
+      title: "心动礼物收藏家",
+      description: "用心记录彼此赠予的温暖礼物或手写信",
       category: "gifts",
       icon: "Gift",
-      conditionDescription: "记录至少 2 件礼物或手写信",
+      conditionDescription: "记录至少 2 份心意物品",
       targetValue: 2,
     },
     {
@@ -448,17 +448,17 @@ export function calculateAchievements(isAuthenticated = false): Achievement[] {
       description: "携手打卡完成第 1 项共同愿望",
       category: "wishes",
       icon: "Sparkles",
-      conditionDescription: "完成至少 1 个 100 件小事清单",
+      conditionDescription: "完成至少 1 件 100 件小事",
       targetValue: 1,
     },
     {
       id: "ach-9",
-      title: "心愿收藏大师",
-      description: "携手打卡完成至少 3 项共同愿望",
+      title: "心愿大师",
+      description: "携手打卡完成至少 5 项共同愿望",
       category: "wishes",
       icon: "Trophy",
-      conditionDescription: "完成至少 3 个 100 件小事清单",
-      targetValue: 3,
+      conditionDescription: "完成至少 5 件 100 件小事",
+      targetValue: 5,
     },
     {
       id: "ach-10",
@@ -473,7 +473,9 @@ export function calculateAchievements(isAuthenticated = false): Achievement[] {
 
   return definitions.map((def) => {
     let currentVal = 0;
-    if (def.id === "ach-1" || def.id === "ach-2" || def.id === "ach-3") {
+    if (def.id === "ach-1") {
+      currentVal = cfg.startDate ? 1 : 0;
+    } else if (def.id === "ach-2" || def.id === "ach-3") {
       currentVal = diffDays;
     } else if (def.id === "ach-4" || def.id === "ach-5") {
       currentVal = photos.length;
@@ -496,11 +498,10 @@ export function calculateAchievements(isAuthenticated = false): Achievement[] {
   });
 }
 
-// ==================== 10. 恋爱时间轴自动聚合引擎 ====================
+// ==================== 10. 恋爱时间轴聚合 ====================
 export function getTimelineEvents(isAuthenticated = false): TimelineEvent[] {
   const events: TimelineEvent[] = [];
 
-  // 照片事件
   getPhotos(isAuthenticated).forEach((p) => {
     events.push({
       id: `tl-photo-${p.id}`,
@@ -514,7 +515,6 @@ export function getTimelineEvents(isAuthenticated = false): TimelineEvent[] {
     });
   });
 
-  // 美食事件
   getFoodRecords(isAuthenticated)
     .filter((f) => !f.isWishlist)
     .forEach((f) => {
@@ -530,7 +530,6 @@ export function getTimelineEvents(isAuthenticated = false): TimelineEvent[] {
       });
     });
 
-  // 礼物事件
   getGiftRecords(isAuthenticated).forEach((g) => {
     events.push({
       id: `tl-gift-${g.id}`,
@@ -544,7 +543,6 @@ export function getTimelineEvents(isAuthenticated = false): TimelineEvent[] {
     });
   });
 
-  // 愿望完成打卡事件
   getWishItems(isAuthenticated)
     .filter((w) => w.status === "completed" && w.completedDate)
     .forEach((w) => {
@@ -560,18 +558,6 @@ export function getTimelineEvents(isAuthenticated = false): TimelineEvent[] {
       });
     });
 
-  // 纪念日
-  demoAnniversaries.forEach((a) => {
-    events.push({
-      id: `tl-anniv-${a.id}`,
-      date: a.date,
-      title: a.title,
-      description: a.description || "重要的特别日子",
-      category: "anniversary",
-      tag: "特别纪念日",
-    });
-  });
-
-  // 按日期降序排列
+  // 排序
   return events.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }

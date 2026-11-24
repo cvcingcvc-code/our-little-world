@@ -12,13 +12,10 @@ import {
   Star,
   MapPin,
   Calendar,
-  Sparkles,
   Camera,
   Trash2,
-  CheckCircle,
   X,
   Bookmark,
-  Heart,
 } from "lucide-react";
 
 export default function FoodView() {
@@ -26,16 +23,14 @@ export default function FoodView() {
   const [foods, setFoods] = useState<FoodRecord[]>([]);
   const [tab, setTab] = useState<"history" | "wishlist">("history");
 
-  // 模态框与表单状态
+  // 表单状态
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [restaurant, setRestaurant] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [location, setLocation] = useState("");
   const [dishes, setDishes] = useState("");
   const [rating, setRating] = useState(5);
-  const [price, setPrice] = useState("");
   const [review, setReview] = useState("");
-  const [story, setStory] = useState("");
   const [isWishlist, setIsWishlist] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -46,10 +41,8 @@ export default function FoodView() {
     setFoods(getFoodRecords(isAuthenticated));
   }, [isAuthenticated, refreshKey]);
 
-  // 过滤已打卡与想吃清单
   const historyList = foods.filter((f) => !f.isWishlist);
   const wishlist = foods.filter((f) => f.isWishlist);
-
   const currentList = tab === "history" ? historyList : wishlist;
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,24 +74,19 @@ export default function FoodView() {
     saveFoodRecord({
       restaurant: restaurant.trim(),
       date,
-      location: location.trim() || "未知坐标",
-      dishes: dishList.length > 0 ? dishList : ["特色招牌菜"],
+      location: location.trim() || "未记录坐标",
+      dishes: dishList.length > 0 ? dishList : ["特色菜品"],
       rating,
-      price: price ? parseFloat(price) : undefined,
       imageUrl: imageUrl || undefined,
-      review: review.trim() || "人间烟火，幸好有你相伴。",
-      story: story.trim() || undefined,
+      review: review.trim() || "与你同享的三餐，便是世间最好的烟火。",
       isWishlist,
       isPrivate: false,
     });
 
-    // 重置
     setRestaurant("");
     setLocation("");
     setDishes("");
-    setPrice("");
     setReview("");
-    setStory("");
     setImageUrl("");
     setAddModalOpen(false);
     triggerRefresh();
@@ -117,19 +105,19 @@ export default function FoodView() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8 animate-fadeIn">
-      {/* 头部区域 */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-light text-amber-600 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 border border-amber-200/50">
+    <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10 sm:py-14 space-y-10 animate-fadeIn">
+      {/* 头部区 */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-200/80 dark:border-white/10">
+        <div className="space-y-2.5">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-light text-amber-600 dark:text-amber-300 bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200/50 backdrop-blur-md">
             <UtensilsCrossed className="w-3.5 h-3.5" />
             <span>三餐四季 · 人间烟火气</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-light tracking-tight text-slate-800 dark:text-slate-100">
+          <h2 className="text-3xl sm:text-4xl font-light tracking-tight text-slate-800 dark:text-slate-100 font-serif">
             我们的美食日记
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-            热气腾腾的饭菜与对坐微笑的眼神。已打卡 {historyList.length} 家美味，还有 {wishlist.length} 个想吃清单待奔赴。
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-light">
+            热气腾腾的饭菜与对坐微笑的眼神。已打卡 {historyList.length} 顿烟火，尚有 {wishlist.length} 个想吃清单待奔赴。
           </p>
         </div>
 
@@ -138,20 +126,20 @@ export default function FoodView() {
             setIsWishlist(tab === "wishlist");
             setAddModalOpen(true);
           }}
-          className="px-4 py-2.5 rounded-full text-xs font-medium text-white bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 shadow-md shadow-amber-500/20 transition flex items-center gap-1.5 cursor-pointer self-start md:self-auto"
+          className="px-5 py-2.5 rounded-full text-xs font-medium text-white bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 shadow-lg shadow-amber-500/20 transition cursor-pointer flex items-center gap-1.5 border-none self-start md:self-auto"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>记录一次美味</span>
         </button>
       </div>
 
-      {/* 切换选项卡：已打卡 vs 想吃心愿 */}
+      {/* 选项卡切换 */}
       <div className="flex items-center gap-2">
         <button
           onClick={() => setTab("history")}
-          className={`px-4 py-2 rounded-full text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
+          className={`px-4 py-2 rounded-full text-xs font-medium transition cursor-pointer border-none outline-none flex items-center gap-1.5 ${
             tab === "history"
-              ? "bg-slate-800 dark:bg-slate-100 text-white dark:text-slate-900 shadow-xs"
+              ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-sm"
               : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200"
           }`}
         >
@@ -160,32 +148,42 @@ export default function FoodView() {
         </button>
         <button
           onClick={() => setTab("wishlist")}
-          className={`px-4 py-2 rounded-full text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
+          className={`px-4 py-2 rounded-full text-xs font-medium transition cursor-pointer border-none outline-none flex items-center gap-1.5 ${
             tab === "wishlist"
-              ? "bg-slate-800 dark:bg-slate-100 text-white dark:text-slate-900 shadow-xs"
+              ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-sm"
               : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200"
           }`}
         >
           <Bookmark className="w-3.5 h-3.5" />
-          <span>未来想吃清单 ({wishlist.length})</span>
+          <span>想吃心愿清单 ({wishlist.length})</span>
         </button>
       </div>
 
-      {/* 美食卡片列表 */}
+      {/* 真实空状态或美食卡片列表 */}
       {currentList.length === 0 ? (
-        <div className="p-12 text-center rounded-3xl bg-slate-50 dark:bg-slate-900/50 border border-dashed border-slate-200 dark:border-slate-800 text-slate-400 space-y-3">
-          <UtensilsCrossed className="w-10 h-10 mx-auto text-slate-300 dark:text-slate-600" />
-          <p className="text-sm font-light">
-            {tab === "history" ? "还没有记录打卡过的餐厅" : "未来想吃清单还是空的"}
-          </p>
+        <div className="p-16 sm:p-20 text-center rounded-3xl bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-dashed border-slate-300 dark:border-white/10 text-slate-400 space-y-4 max-w-2xl mx-auto">
+          <div className="w-16 h-16 rounded-3xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/50 flex items-center justify-center mx-auto text-amber-500">
+            <UtensilsCrossed className="w-8 h-8" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="font-serif text-lg text-slate-700 dark:text-slate-200 font-medium">
+              {tab === "history" ? "还没有打卡过美食" : "想吃心愿清单还是空的"}
+            </h3>
+            <p className="text-xs text-slate-500 font-light max-w-sm mx-auto leading-relaxed">
+              {tab === "history"
+                ? "每一次共同品尝的美味都值得被铭记。快来记录你们第一次一起吃的那家餐厅吧。"
+                : "写下一家你们一直想去、等下雪天或周末一起去品尝的暖冬小馆吧。"}
+            </p>
+          </div>
           <button
             onClick={() => {
               setIsWishlist(tab === "wishlist");
               setAddModalOpen(true);
             }}
-            className="text-xs text-amber-500 hover:underline cursor-pointer"
+            className="px-6 py-2.5 rounded-full bg-gradient-to-r from-amber-500 to-rose-500 text-white text-xs font-medium shadow-md hover:scale-105 transition cursor-pointer inline-flex items-center gap-1.5 border-none"
           >
-            立即添加一家想吃的餐厅
+            <Plus className="w-3.5 h-3.5" />
+            <span>{tab === "history" ? "记录第一顿美食" : "加入一家想吃餐厅"}</span>
           </button>
         </div>
       ) : (
@@ -193,82 +191,69 @@ export default function FoodView() {
           {currentList.map((item) => (
             <div
               key={item.id}
-              className="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-md hover:shadow-xl border border-slate-200/80 dark:border-slate-800 transition duration-300 flex flex-col justify-between"
+              className="bg-white dark:bg-slate-900/90 rounded-3xl overflow-hidden shadow-md hover:shadow-2xl border border-slate-200/80 dark:border-white/10 transition-all duration-300 flex flex-col justify-between"
             >
               <div>
-                {/* 封面图片 */}
                 {item.imageUrl ? (
                   <div className="relative w-full aspect-16/9 bg-slate-100 dark:bg-slate-800">
                     <Image src={item.imageUrl} alt={item.restaurant} fill className="object-cover" />
-                    <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-sm text-[11px] text-amber-300 font-medium flex items-center gap-1">
+                    <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-sm text-[11px] text-amber-300 font-medium flex items-center gap-1">
                       <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
                       <span>{item.rating} 星美味</span>
                     </div>
                   </div>
                 ) : (
-                  <div className="w-full aspect-16/9 bg-gradient-to-tr from-amber-50 to-rose-50 dark:from-slate-800 dark:to-slate-850 flex items-center justify-center text-amber-400/60">
+                  <div className="w-full aspect-16/9 bg-gradient-to-tr from-amber-50 to-rose-50 dark:from-slate-800 dark:to-slate-850 flex items-center justify-center text-amber-400/50">
                     <UtensilsCrossed className="w-10 h-10" />
                   </div>
                 )}
 
-                {/* 详情内容 */}
-                <div className="p-5 space-y-3">
+                <div className="p-6 space-y-3">
                   <div className="flex items-start justify-between gap-2">
                     <h3 className="font-serif text-lg font-medium text-slate-800 dark:text-slate-100">
                       {item.restaurant}
                     </h3>
-                    <span className="text-xs text-slate-400 shrink-0 flex items-center gap-1">
+                    <span className="text-xs text-slate-400 shrink-0 font-mono flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
                       {item.date}
                     </span>
                   </div>
 
-                  <p className="text-xs text-slate-400 flex items-center gap-1">
+                  <p className="text-xs text-slate-400 flex items-center gap-1 font-light">
                     <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                     <span className="truncate">{item.location}</span>
                   </p>
 
-                  {/* 菜品标签 */}
                   <div className="flex flex-wrap gap-1.5">
                     {item.dishes.map((dish, i) => (
                       <span
                         key={i}
-                        className="text-[11px] px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-200 font-light border border-amber-200/40"
+                        className="text-[11px] px-2.5 py-0.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-200 font-light border border-amber-200/40"
                       >
                         🍲 {dish}
                       </span>
                     ))}
                   </div>
 
-                  {/* 评价 */}
                   <p className="text-xs text-slate-600 dark:text-slate-300 font-light leading-relaxed pt-1">
                     {item.review}
                   </p>
-
-                  {/* 专属小故事 */}
-                  {item.story && (
-                    <div className="p-3 rounded-2xl bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/50 text-xs text-rose-800 dark:text-rose-200 font-light leading-relaxed">
-                      <span className="font-medium text-rose-500 block mb-0.5">当餐回忆小剧场：</span>
-                      {item.story}
-                    </div>
-                  )}
                 </div>
               </div>
 
-              {/* 底部操作条 */}
-              <div className="px-5 py-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-400">
+              <div className="px-6 py-3.5 border-t border-slate-100 dark:border-white/5 flex items-center justify-between text-xs text-slate-400">
                 <button
                   onClick={() => handleToggleWish(item.id)}
-                  className="hover:text-amber-500 flex items-center gap-1 transition cursor-pointer"
+                  className="hover:text-amber-500 flex items-center gap-1 transition cursor-pointer border-none bg-transparent"
                 >
                   <Bookmark className="w-3.5 h-3.5" />
-                  <span>{item.isWishlist ? "标记为已打卡" : "移入想吃清单"}</span>
+                  <span>{item.isWishlist ? "标记为已尝过" : "移入想吃清单"}</span>
                 </button>
 
                 {isAuthenticated && (
                   <button
                     onClick={() => handleDelete(item.id)}
-                    className="hover:text-rose-500 transition cursor-pointer"
+                    className="hover:text-rose-500 transition cursor-pointer border-none bg-transparent"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -282,25 +267,24 @@ export default function FoodView() {
       {/* 新增美食记录模态框 */}
       {addModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-          <div className="relative w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto space-y-5">
+          <div className="relative w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto space-y-5">
             <button
               onClick={() => setAddModalOpen(false)}
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-full cursor-pointer"
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-full cursor-pointer border-none"
             >
               <X className="w-5 h-5" />
             </button>
 
             <div className="space-y-1">
-              <h3 className="text-lg font-medium text-slate-800 dark:text-slate-100">
-                记录一次美味时刻
+              <h3 className="text-lg font-serif font-medium text-slate-800 dark:text-slate-100">
+                记录一次美味烟火
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 font-light">
                 记录共同品尝的美食味道，或者加入未来想去的心愿单。
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* 图片上传 */}
               <div
                 onClick={() => fileInputRef.current?.click()}
                 className="relative w-full aspect-16/9 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-amber-400 flex flex-col items-center justify-center overflow-hidden cursor-pointer bg-slate-50 dark:bg-slate-800/50 transition"
@@ -334,7 +318,7 @@ export default function FoodView() {
                     required
                     value={restaurant}
                     onChange={(e) => setRestaurant(e.target.value)}
-                    placeholder="如：雪见町日式寿喜烧"
+                    placeholder="如：日式寿喜烧"
                     className="w-full px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-amber-400"
                   />
                 </div>
@@ -355,20 +339,20 @@ export default function FoodView() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                    地点 / 地址
+                    地点
                   </label>
                   <input
                     type="text"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    placeholder="如：暖冬小巷 7 号"
+                    placeholder="如：暖冬小巷"
                     className="w-full px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-amber-400"
                   />
                 </div>
 
                 <div className="space-y-1">
                   <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                    美味评分 (1-5星)
+                    美味评分
                   </label>
                   <div className="flex items-center gap-1 pt-1.5">
                     {[1, 2, 3, 4, 5].map((s) => (
@@ -376,7 +360,7 @@ export default function FoodView() {
                         type="button"
                         key={s}
                         onClick={() => setRating(s)}
-                        className="p-1 cursor-pointer"
+                        className="p-1 cursor-pointer border-none bg-transparent"
                       >
                         <Star
                           className={`w-5 h-5 ${
@@ -391,7 +375,7 @@ export default function FoodView() {
 
               <div className="space-y-1">
                 <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                  吃过的招牌菜品（用逗号分隔）
+                  吃过的招牌菜（用逗号分隔）
                 </label>
                 <input
                   type="text"
@@ -404,26 +388,13 @@ export default function FoodView() {
 
               <div className="space-y-1">
                 <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                  味道评价
+                  味道评价与小记
                 </label>
                 <textarea
                   rows={2}
                   value={review}
                   onChange={(e) => setReview(e.target.value)}
                   placeholder="汤底甜润，热气腾腾..."
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-amber-400"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                  餐桌回忆小故事（可选）
-                </label>
-                <textarea
-                  rows={2}
-                  value={story}
-                  onChange={(e) => setStory(e.target.value)}
-                  placeholder="如：你偷偷把最大的肉夹到了我的碗里..."
                   className="w-full px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-amber-400"
                 />
               </div>
@@ -437,7 +408,7 @@ export default function FoodView() {
                   className="rounded text-amber-500 focus:ring-amber-400"
                 />
                 <label htmlFor="wishlistCheck" className="text-xs text-slate-600 dark:text-slate-400">
-                  作为“未来想吃清单”（未吃过，待去打卡）
+                  加入“未来想吃清单”（未吃过，待去打卡）
                 </label>
               </div>
 
@@ -445,14 +416,14 @@ export default function FoodView() {
                 <button
                   type="button"
                   onClick={() => setAddModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                  className="px-4 py-2 rounded-xl text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer border-none"
                 >
                   取消
                 </button>
                 <button
                   type="submit"
                   disabled={isProcessing}
-                  className="px-6 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 text-xs font-medium text-white shadow-md hover:from-amber-600 hover:to-rose-600 transition cursor-pointer disabled:opacity-50"
+                  className="px-6 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 text-xs font-medium text-white shadow-md hover:from-amber-600 hover:to-rose-600 transition cursor-pointer disabled:opacity-50 border-none"
                 >
                   保存记录
                 </button>

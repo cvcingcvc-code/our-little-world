@@ -2,26 +2,34 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { siteConfig } from "@/config/site";
 import { useApp } from "@/context/AppContext";
 import {
   Heart,
   Sparkles,
+  Calendar,
+  Clock,
+  ArrowRight,
+  ChevronDown,
   Camera,
   UtensilsCrossed,
   Gift,
   ListTodo,
   Milestone,
-  ArrowRight,
-  Clock,
-  Calendar,
-  Compass,
+  CheckCircle2,
+  X,
+  Edit3,
 } from "lucide-react";
 import { NavTab } from "../common/Navigation";
+import { getActiveSiteConfig, saveActiveSiteStartDate } from "@/config/site";
 import { getPhotos, getFoodRecords, getGiftRecords, getWishItems } from "@/lib/storage";
 
 export default function HomeView({ onNavigate }: { onNavigate: (tab: NavTab) => void }) {
-  const { isAuthenticated, refreshKey } = useApp();
+  const { isAuthenticated, refreshKey, triggerRefresh } = useApp();
+
+  const [startDate, setStartDate] = useState<string>("");
+  const [dateModalOpen, setDateModalOpen] = useState(false);
+  const [inputDate, setInputDate] = useState("");
+
   const [timeTogether, setTimeTogether] = useState({
     days: 0,
     hours: 0,
@@ -36,9 +44,18 @@ export default function HomeView({ onNavigate }: { onNavigate: (tab: NavTab) => 
     wishCount: 0,
   });
 
-  // 动态更新相恋时间（精确至秒）
+  // 读取与同步用户自定义恋爱起始日
   useEffect(() => {
-    const startTimestamp = new Date(siteConfig.startDate).getTime();
+    const cfg = getActiveSiteConfig();
+    setStartDate(cfg.startDate);
+    setInputDate(cfg.startDate || new Date().toISOString().split("T")[0]);
+  }, [refreshKey]);
+
+  // 动态更新相恋时间（秒级跳动）
+  useEffect(() => {
+    if (!startDate) return;
+    const startTimestamp = new Date(startDate).getTime();
+    if (isNaN(startTimestamp)) return;
 
     const updateTimer = () => {
       const now = Date.now();
@@ -55,9 +72,9 @@ export default function HomeView({ onNavigate }: { onNavigate: (tab: NavTab) => 
     updateTimer();
     const interval = setInterval(updateTimer, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [startDate]);
 
-  // 统计数据
+  // 读取真实数据统计
   useEffect(() => {
     const photos = getPhotos(isAuthenticated);
     const foods = getFoodRecords(isAuthenticated);
@@ -72,165 +89,311 @@ export default function HomeView({ onNavigate }: { onNavigate: (tab: NavTab) => 
     });
   }, [isAuthenticated, refreshKey]);
 
+  const handleSaveDate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputDate) return;
+    saveActiveSiteStartDate(inputDate);
+    setStartDate(inputDate);
+    setDateModalOpen(false);
+    triggerRefresh();
+  };
+
   return (
-    <div className="relative min-h-[calc(100vh-4rem)] flex flex-col justify-between overflow-hidden">
-      {/* 沉浸式冬日动漫全景背景层 */}
-      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-        <Image
-          src="/winter-anime-hero.jpg"
-          alt="冬日恋歌主视觉"
-          fill
-          priority
-          className="object-cover object-center filter brightness-90 dark:brightness-60 scale-100 transition-all duration-700"
-        />
-        {/* 日夜两套微光滤镜 */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-sky-950/20 to-slate-950/80 dark:from-slate-950/60 dark:via-slate-950/80 dark:to-slate-950/95" />
-      </div>
+    <div className="relative w-full">
+      {/* ================= 1. 电影级视觉全屏首屏 (Hero Screen) ================= */}
+      <section className="relative w-full h-[calc(100vh-4.5rem)] min-h-[640px] max-h-[1080px] flex items-center overflow-hidden">
+        {/* 全屏高清冬日动漫背景层（右侧美少女主体，左侧留白文案） */}
+        <div className="absolute inset-0 pointer-events-none -z-10">
+          <Image
+            src="/winter-anime-hero.jpg"
+            alt="冬日恋歌"
+            fill
+            priority
+            quality={95}
+            className="object-cover object-right sm:object-center filter brightness-[0.92] dark:brightness-[0.65] transition-all duration-1000 scale-[1.01]"
+          />
+          {/* 左侧向右的电影级柔光渐变，确保左侧文字排版极佳阅读性，同时保留右侧动漫人物美感 */}
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/40 to-transparent dark:from-slate-950/90 dark:via-slate-950/60" />
+          {/* 底部柔和淡化过渡 */}
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+        </div>
 
-      {/* 核心内容区 */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 flex-1 flex flex-col justify-center space-y-10 sm:space-y-14">
-        {/* 顶部浪漫徽章与主副标 */}
-        <div className="space-y-4 max-w-2xl text-left">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-light tracking-widest text-white/90 bg-white/10 backdrop-blur-md border border-white/20 shadow-xs">
-            <Sparkles className="w-3.5 h-3.5 text-rose-300" />
-            <span>冬日恋歌 · 专属两人的数字博物馆</span>
+        {/* 左侧留白文案与核心视觉重心区 */}
+        <div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 w-full flex">
+          <div className="max-w-xl lg:max-w-2xl space-y-6 sm:space-y-8 animate-fadeIn">
+            {/* 顶部浪漫徽章 */}
+            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-light tracking-[0.2em] text-white/95 bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg shadow-black/10">
+              <Sparkles className="w-3.5 h-3.5 text-rose-300 animate-pulse" />
+              <span>OUR LITTLE WORLD · 冬日恋歌</span>
+            </div>
+
+            {/* 中文主标题与副标题（电影排版美感） */}
+            <div className="space-y-3">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extralight tracking-wider text-white leading-tight font-serif drop-shadow-md">
+                冬天很冷，<br />
+                <span className="font-light bg-gradient-to-r from-rose-200 via-white to-sky-200 bg-clip-text text-transparent">
+                  幸好有你。
+                </span>
+              </h1>
+              <p className="text-sm sm:text-base text-slate-200/90 font-light tracking-widest leading-relaxed drop-shadow max-w-lg">
+                想把与你有关的每一个瞬间，都偷偷收藏。
+              </p>
+            </div>
+
+            {/* 精致恋爱计时器数字卡片 */}
+            <div className="p-5 sm:p-6 rounded-3xl bg-slate-900/40 backdrop-blur-2xl border border-white/20 dark:border-white/10 shadow-2xl space-y-3 max-w-lg">
+              <div className="flex items-center justify-between text-xs text-slate-200 font-light">
+                <span className="flex items-center gap-1.5 text-rose-200">
+                  <Heart className="w-3.5 h-3.5 fill-rose-400 text-rose-400" />
+                  <span>携手走过的岁月</span>
+                </span>
+                <button
+                  onClick={() => setDateModalOpen(true)}
+                  className="flex items-center gap-1 text-[11px] text-sky-200 hover:text-white transition cursor-pointer"
+                >
+                  <Calendar className="w-3 h-3" />
+                  <span>{startDate ? `起点: ${startDate}` : "点击设置相恋纪念日"}</span>
+                  <Edit3 className="w-2.5 h-2.5 ml-0.5" />
+                </button>
+              </div>
+
+              {startDate ? (
+                /* 精致四格数字卡片 */
+                <div className="grid grid-cols-4 gap-2 sm:gap-3 text-center">
+                  <div className="p-2.5 rounded-2xl bg-white/10 dark:bg-slate-800/60 backdrop-blur-md border border-white/15">
+                    <span className="block text-2xl sm:text-3xl font-light text-white font-mono">
+                      {timeTogether.days}
+                    </span>
+                    <span className="text-[10px] text-slate-300 font-light tracking-widest">DAYS</span>
+                  </div>
+                  <div className="p-2.5 rounded-2xl bg-white/10 dark:bg-slate-800/60 backdrop-blur-md border border-white/15">
+                    <span className="block text-2xl sm:text-3xl font-light text-white font-mono">
+                      {String(timeTogether.hours).padStart(2, "0")}
+                    </span>
+                    <span className="text-[10px] text-slate-300 font-light tracking-widest">HOURS</span>
+                  </div>
+                  <div className="p-2.5 rounded-2xl bg-white/10 dark:bg-slate-800/60 backdrop-blur-md border border-white/15">
+                    <span className="block text-2xl sm:text-3xl font-light text-white font-mono">
+                      {String(timeTogether.minutes).padStart(2, "0")}
+                    </span>
+                    <span className="text-[10px] text-slate-300 font-light tracking-widest">MINS</span>
+                  </div>
+                  <div className="p-2.5 rounded-2xl bg-white/10 dark:bg-slate-800/60 backdrop-blur-md border border-white/15">
+                    <span className="block text-2xl sm:text-3xl font-light text-rose-300 font-mono animate-pulse">
+                      {String(timeTogether.seconds).padStart(2, "0")}
+                    </span>
+                    <span className="text-[10px] text-slate-300 font-light tracking-widest">SECS</span>
+                  </div>
+                </div>
+              ) : (
+                /* 未设定纪念日时的引导卡片 */
+                <div
+                  onClick={() => setDateModalOpen(true)}
+                  className="p-4 rounded-2xl bg-white/10 border border-dashed border-white/30 text-center cursor-pointer hover:bg-white/15 transition group"
+                >
+                  <p className="text-xs text-white/90 font-light flex items-center justify-center gap-1.5">
+                    <Calendar className="w-4 h-4 text-rose-300" />
+                    <span>点击设定属于你们的真实相恋纪念日</span>
+                  </p>
+                  <span className="text-[10px] text-slate-300 mt-1 block">
+                    拒绝伪造日期，精准记录属于你们的心跳秒数
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* 灵动主呼吁按钮 */}
+            <div className="flex flex-wrap items-center gap-4 pt-1">
+              <button
+                onClick={() => onNavigate("gallery")}
+                className="px-8 py-3.5 rounded-full text-xs sm:text-sm font-medium tracking-wider text-white bg-gradient-to-r from-rose-500/90 to-indigo-600/90 hover:from-rose-500 hover:to-indigo-600 border border-white/25 shadow-xl shadow-rose-500/20 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center gap-2.5 group cursor-pointer"
+              >
+                <Heart className="w-4 h-4 text-rose-200 fill-rose-200 group-hover:scale-110 transition-transform" />
+                <span>漫游回忆展厅</span>
+                <ArrowRight className="w-4 h-4 text-white/70 group-hover:translate-x-1 transition-transform" />
+              </button>
+
+              <button
+                onClick={() => onNavigate("starry")}
+                className="px-6 py-3.5 rounded-full text-xs sm:text-sm font-medium tracking-wider text-slate-200 bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/20 transition cursor-pointer flex items-center gap-2"
+              >
+                <Sparkles className="w-4 h-4 text-sky-300" />
+                <span>仰望专属恋爱星空</span>
+              </button>
+            </div>
           </div>
+        </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extralight tracking-tight text-white leading-tight drop-shadow-md">
-            {siteConfig.mainMotto}
-          </h1>
+        {/* 底部探索滚动提示 */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 text-slate-400 text-xs font-light tracking-widest pointer-events-none animate-bounce">
+          <span>EXPLORE OUR MUSEUM</span>
+          <ChevronDown className="w-4 h-4 text-slate-300" />
+        </div>
+      </section>
 
-          <p className="text-base sm:text-lg text-slate-200/90 font-light tracking-wide leading-relaxed drop-shadow-sm max-w-xl">
-            {siteConfig.subMotto}
+      {/* ================= 2. 展览馆主题展厅导览区 (Museum Pavilions) ================= */}
+      <section className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 py-16 sm:py-24 space-y-12">
+        <div className="text-center space-y-2 max-w-xl mx-auto">
+          <span className="text-xs uppercase tracking-[0.25em] text-rose-500 dark:text-rose-400 font-medium">
+            MUSEUM EXHIBITIONS
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-light text-slate-800 dark:text-slate-100 font-serif">
+            恋爱纪念馆展厅导览
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-light">
+            每一个展厅都收纳着彼此珍视的时光切片，温存着点点滴滴。
           </p>
         </div>
 
-        {/* 恋爱时间动态走动计时牌 */}
-        <div className="max-w-xl p-5 sm:p-7 rounded-3xl bg-white/15 dark:bg-slate-900/40 backdrop-blur-xl border border-white/25 dark:border-white/10 shadow-2xl space-y-3">
-          <div className="flex items-center justify-between text-xs text-slate-200 font-light">
-            <div className="flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-rose-300" />
-              <span>我们已经携手走过</span>
-            </div>
-            <div className="flex items-center gap-1 text-[11px] text-slate-300/80">
-              <Calendar className="w-3 h-3" />
-              <span>相恋起点：{siteConfig.startDate}</span>
-            </div>
-          </div>
-
-          {/* 数字格 */}
-          <div className="grid grid-cols-4 gap-2 sm:gap-3 text-center">
-            <div className="p-2 sm:p-3 rounded-2xl bg-white/20 dark:bg-slate-800/50 backdrop-blur-md border border-white/20">
-              <span className="block text-2xl sm:text-3xl font-light text-white tracking-tight">
-                {timeTogether.days}
-              </span>
-              <span className="text-[10px] text-slate-200/80 font-light">天</span>
-            </div>
-            <div className="p-2 sm:p-3 rounded-2xl bg-white/20 dark:bg-slate-800/50 backdrop-blur-md border border-white/20">
-              <span className="block text-2xl sm:text-3xl font-light text-white tracking-tight">
-                {String(timeTogether.hours).padStart(2, "0")}
-              </span>
-              <span className="text-[10px] text-slate-200/80 font-light">时</span>
-            </div>
-            <div className="p-2 sm:p-3 rounded-2xl bg-white/20 dark:bg-slate-800/50 backdrop-blur-md border border-white/20">
-              <span className="block text-2xl sm:text-3xl font-light text-white tracking-tight">
-                {String(timeTogether.minutes).padStart(2, "0")}
-              </span>
-              <span className="text-[10px] text-slate-200/80 font-light">分</span>
-            </div>
-            <div className="p-2 sm:p-3 rounded-2xl bg-white/20 dark:bg-slate-800/50 backdrop-blur-md border border-white/20">
-              <span className="block text-2xl sm:text-3xl font-light text-rose-300 tracking-tight">
-                {String(timeTogether.seconds).padStart(2, "0")}
-              </span>
-              <span className="text-[10px] text-slate-200/80 font-light">秒</span>
-            </div>
-          </div>
-        </div>
-
-        {/* 核心四个快捷入口卡片 */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-4xl">
-          <button
+        {/* 4 大核心常设展厅 */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* 展厅 1：可爱收藏馆 */}
+          <div
             onClick={() => onNavigate("gallery")}
-            className="p-4 rounded-2xl bg-white/10 dark:bg-slate-900/40 backdrop-blur-md border border-white/15 hover:border-white/40 hover:bg-white/20 dark:hover:bg-slate-800/60 transition-all duration-300 text-left group cursor-pointer shadow-lg"
+            className="group relative p-6 rounded-3xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer flex flex-col justify-between space-y-6"
           >
-            <div className="w-8 h-8 rounded-xl bg-rose-500/20 text-rose-300 flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform">
-              <Camera className="w-4 h-4" />
+            <div className="space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-rose-500/20 to-pink-500/10 text-rose-500 flex items-center justify-center border border-rose-200/50 group-hover:scale-110 transition-transform">
+                <Camera className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-serif font-medium text-slate-800 dark:text-slate-100 flex items-center justify-between">
+                <span>她的可爱收藏馆</span>
+                <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-rose-500" />
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-light">
+                拍立得画廊、专属照片背后的故事、全屏大图预览灯箱。
+              </p>
             </div>
-            <p className="text-sm font-medium text-white flex items-center justify-between">
-              <span>可爱收藏馆</span>
-              <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-            </p>
-            <p className="text-[11px] text-slate-300/80 mt-0.5">
-              已珍藏 {stats.photoCount} 个瞬间
-            </p>
-          </button>
+            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+              <span>已珍藏胶片</span>
+              <span className="font-mono font-medium text-slate-700 dark:text-slate-300">{stats.photoCount} 张</span>
+            </div>
+          </div>
 
-          <button
+          {/* 展厅 2：美食日记 */}
+          <div
             onClick={() => onNavigate("food")}
-            className="p-4 rounded-2xl bg-white/10 dark:bg-slate-900/40 backdrop-blur-md border border-white/15 hover:border-white/40 hover:bg-white/20 dark:hover:bg-slate-800/60 transition-all duration-300 text-left group cursor-pointer shadow-lg"
+            className="group relative p-6 rounded-3xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer flex flex-col justify-between space-y-6"
           >
-            <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform">
-              <UtensilsCrossed className="w-4 h-4" />
+            <div className="space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500/20 to-orange-500/10 text-amber-500 flex items-center justify-center border border-amber-200/50 group-hover:scale-110 transition-transform">
+                <UtensilsCrossed className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-serif font-medium text-slate-800 dark:text-slate-100 flex items-center justify-between">
+                <span>我们的美食日记</span>
+                <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-amber-500" />
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-light">
+                三餐四季的美味印记，记录餐厅、评价与未来想吃清单。
+              </p>
             </div>
-            <p className="text-sm font-medium text-white flex items-center justify-between">
-              <span>美食日记</span>
-              <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-            </p>
-            <p className="text-[11px] text-slate-300/80 mt-0.5">
-              品尝过 {stats.foodCount} 顿烟火
-            </p>
-          </button>
+            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+              <span>已打卡餐厅</span>
+              <span className="font-mono font-medium text-slate-700 dark:text-slate-300">{stats.foodCount} 处</span>
+            </div>
+          </div>
 
-          <button
+          {/* 展厅 3：礼物与惊喜博物馆 */}
+          <div
             onClick={() => onNavigate("gifts")}
-            className="p-4 rounded-2xl bg-white/10 dark:bg-slate-900/40 backdrop-blur-md border border-white/15 hover:border-white/40 hover:bg-white/20 dark:hover:bg-slate-800/60 transition-all duration-300 text-left group cursor-pointer shadow-lg"
+            className="group relative p-6 rounded-3xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer flex flex-col justify-between space-y-6"
           >
-            <div className="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-300 flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform">
-              <Gift className="w-4 h-4" />
+            <div className="space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-500/20 to-purple-500/10 text-indigo-500 flex items-center justify-center border border-indigo-200/50 group-hover:scale-110 transition-transform">
+                <Gift className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-serif font-medium text-slate-800 dark:text-slate-100 flex items-center justify-between">
+                <span>礼物与惊喜馆</span>
+                <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-indigo-500" />
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-light">
+                鲜花、信件与礼物背后的心动瞬间，珍藏对方赠予的暖意。
+              </p>
             </div>
-            <p className="text-sm font-medium text-white flex items-center justify-between">
-              <span>礼物博物馆</span>
-              <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-            </p>
-            <p className="text-[11px] text-slate-300/80 mt-0.5">
-              记录 {stats.giftCount} 份惊喜爱意
-            </p>
-          </button>
+            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+              <span>收到与送出</span>
+              <span className="font-mono font-medium text-slate-700 dark:text-slate-300">{stats.giftCount} 份</span>
+            </div>
+          </div>
 
-          <button
+          {/* 展厅 4：100件小事 */}
+          <div
             onClick={() => onNavigate("wishes")}
-            className="p-4 rounded-2xl bg-white/10 dark:bg-slate-900/40 backdrop-blur-md border border-white/15 hover:border-white/40 hover:bg-white/20 dark:hover:bg-slate-800/60 transition-all duration-300 text-left group cursor-pointer shadow-lg"
+            className="group relative p-6 rounded-3xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer flex flex-col justify-between space-y-6"
           >
-            <div className="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-300 flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform">
-              <ListTodo className="w-4 h-4" />
+            <div className="space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500/20 to-cyan-500/10 text-sky-500 flex items-center justify-center border border-sky-200/50 group-hover:scale-110 transition-transform">
+                <ListTodo className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-serif font-medium text-slate-800 dark:text-slate-100 flex items-center justify-between">
+                <span>我们的100件小事</span>
+                <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-sky-500" />
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-light">
+                携手奔赴的愿望清单，打卡拍照留念并触发浪漫庆祝。
+              </p>
             </div>
-            <p className="text-sm font-medium text-white flex items-center justify-between">
-              <span>100件小事</span>
-              <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-            </p>
-            <p className="text-[11px] text-slate-300/80 mt-0.5">
-              已点亮 {stats.wishCount} 个愿望
-            </p>
-          </button>
+            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+              <span>已点亮愿望</span>
+              <span className="font-mono font-medium text-slate-700 dark:text-slate-300">{stats.wishCount} 项</span>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* 底部小标签与特色入口：恋爱星空 */}
-      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 pb-6 pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-300/70">
-        <div className="flex items-center gap-2">
-          <Heart className="w-3.5 h-3.5 text-rose-400 fill-rose-400/50" />
-          <span>两颗心在寒冬中的共鸣 · Our Little World</span>
+      {/* 设置恋爱纪念日起点模态框 */}
+      {dateModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+          <div className="relative w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl text-slate-800 dark:text-slate-100 space-y-5">
+            <button
+              onClick={() => setDateModalOpen(false)}
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-full cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="space-y-1.5">
+              <div className="inline-flex items-center gap-1.5 text-xs text-rose-500 font-medium">
+                <Heart className="w-3.5 h-3.5 fill-rose-500" />
+                <span>设定专属恋爱起点</span>
+              </div>
+              <h3 className="text-lg font-serif font-medium">你们是哪一天在一起的？</h3>
+              <p className="text-xs text-slate-500 font-light">
+                设定后，首页计时器将以此为基准，实时精确计算你们携手走过的天、时、分、秒。
+              </p>
+            </div>
+
+            <form onSubmit={handleSaveDate} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-300">相恋纪念日 *</label>
+                <input
+                  type="date"
+                  required
+                  value={inputDate}
+                  onChange={(e) => setInputDate(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:border-rose-400"
+                />
+              </div>
+
+              <div className="pt-2 flex justify-end gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setDateModalOpen(false)}
+                  className="px-4 py-2 rounded-xl text-xs text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                >
+                  取消
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 rounded-xl bg-gradient-to-r from-rose-500 to-indigo-600 text-xs font-medium text-white shadow-md transition cursor-pointer"
+                >
+                  保存纪念日
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-
-        <button
-          onClick={() => onNavigate("starry")}
-          className="px-4 py-2 rounded-full bg-indigo-950/60 hover:bg-indigo-900/80 border border-indigo-400/30 text-indigo-200 flex items-center gap-1.5 transition cursor-pointer"
-        >
-          <Sparkles className="w-3.5 h-3.5 text-indigo-300" />
-          <span>仰望专属恋爱星空</span>
-          <ArrowRight className="w-3 h-3" />
-        </button>
-      </div>
+      )}
     </div>
   );
 }

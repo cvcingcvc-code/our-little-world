@@ -231,10 +231,10 @@ export default function HomeView({ onNavigate }: { onNavigate: (tab: NavTab) => 
               </div>
 
               {startDate ? (
-                <div className="grid grid-cols-4 gap-2.5 sm:gap-3 text-center">
+                <div className="grid grid-cols-4 gap-2 sm:gap-3 text-center">
                   {/* 天数 */}
-                  <div className="p-3 sm:p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-inner group hover:bg-white/15 transition">
-                    <span className="font-cinzel text-2xl sm:text-3xl font-light text-white block tracking-wider group-hover:scale-105 transition-transform">
+                  <div className="p-2.5 sm:p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-inner group hover:bg-white/15 transition overflow-hidden">
+                    <span className="font-cinzel text-lg sm:text-2xl lg:text-3xl font-light text-white block tracking-tight sm:tracking-wider tabular-nums group-hover:scale-105 transition-transform">
                       {timeTogether.days}
                     </span>
                     <span className="text-[9px] font-cinzel text-rose-200/80 tracking-[0.2em] uppercase block mt-1">
@@ -243,8 +243,8 @@ export default function HomeView({ onNavigate }: { onNavigate: (tab: NavTab) => 
                   </div>
 
                   {/* 小时 */}
-                  <div className="p-3 sm:p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-inner group hover:bg-white/15 transition">
-                    <span className="font-cinzel text-2xl sm:text-3xl font-light text-sky-200 block tracking-wider">
+                  <div className="p-2.5 sm:p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-inner group hover:bg-white/15 transition overflow-hidden">
+                    <span className="font-cinzel text-lg sm:text-2xl lg:text-3xl font-light text-sky-200 block tracking-tight sm:tracking-wider tabular-nums">
                       {String(timeTogether.hours).padStart(2, "0")}
                     </span>
                     <span className="text-[9px] font-cinzel text-sky-300/80 tracking-[0.2em] uppercase block mt-1">
@@ -253,8 +253,8 @@ export default function HomeView({ onNavigate }: { onNavigate: (tab: NavTab) => 
                   </div>
 
                   {/* 分钟 */}
-                  <div className="p-3 sm:p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-inner group hover:bg-white/15 transition">
-                    <span className="font-cinzel text-2xl sm:text-3xl font-light text-slate-100 block tracking-wider">
+                  <div className="p-2.5 sm:p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-inner group hover:bg-white/15 transition overflow-hidden">
+                    <span className="font-cinzel text-lg sm:text-2xl lg:text-3xl font-light text-slate-100 block tracking-tight sm:tracking-wider tabular-nums">
                       {String(timeTogether.minutes).padStart(2, "0")}
                     </span>
                     <span className="text-[9px] font-cinzel text-slate-300/80 tracking-[0.2em] uppercase block mt-1">
@@ -263,8 +263,8 @@ export default function HomeView({ onNavigate }: { onNavigate: (tab: NavTab) => 
                   </div>
 
                   {/* 秒数实时跳动 */}
-                  <div className="p-3 sm:p-3.5 rounded-2xl bg-rose-500/20 backdrop-blur-md border border-rose-400/30 shadow-inner group">
-                    <span className="font-cinzel text-2xl sm:text-3xl font-normal text-rose-200 block tracking-wider">
+                  <div className="p-2.5 sm:p-3.5 rounded-2xl bg-rose-500/20 backdrop-blur-md border border-rose-400/30 shadow-inner group overflow-hidden">
+                    <span className="font-cinzel text-lg sm:text-2xl lg:text-3xl font-normal text-rose-200 block tracking-tight sm:tracking-wider tabular-nums">
                       {String(timeTogether.seconds).padStart(2, "0")}
                     </span>
                     <span className="text-[9px] font-cinzel text-rose-300 tracking-[0.2em] uppercase block mt-1">
@@ -473,6 +473,13 @@ export default function HomeView({ onNavigate }: { onNavigate: (tab: NavTab) => 
             onClick={() => onNavigate("gifts")}
             className="relative cursor-pointer group"
           >
+            {/* 仿真丝绒蝴蝶结缎带 */}
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
+              <span className="px-3 py-0.5 rounded-full bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 text-white text-[10px] font-cinzel shadow-md shadow-rose-500/40 border border-white/30 tracking-wider flex items-center gap-1">
+                <span>🎀 SILK RIBBON</span>
+              </span>
+            </div>
+
             <div className="p-6 rounded-2xl glass-crystal border border-rose-300/30 shadow-xl group-hover:-translate-y-2 transition-all duration-300 space-y-5 -rotate-1 group-hover:rotate-0">
               <div className="flex items-center justify-between">
                 <div className="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-300 flex items-center justify-center border border-rose-300/40">

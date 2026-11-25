@@ -171,7 +171,7 @@ export default function FoodView() {
               setIsWishlist(tab === "wishlist");
               setAddModalOpen(true);
             }}
-            className="px-6 py-2.5 rounded-full bg-gradient-to-r from-amber-500 to-rose-500 text-white text-xs font-medium shadow-md hover:scale-105 transition cursor-pointer inline-flex items-center gap-1.5 border-none"
+            className="btn-shoujo-primary px-7 py-3 rounded-full text-xs font-serif-sc font-medium tracking-wider cursor-pointer inline-flex items-center gap-1.5 whitespace-nowrap"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>{tab === "history" ? "记录第一顿美食" : "加入一家想吃餐厅"}</span>

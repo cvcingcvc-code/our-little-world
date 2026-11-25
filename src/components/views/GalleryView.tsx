@@ -215,10 +215,10 @@ export default function GalleryView() {
           </div>
           <button
             onClick={() => setUploadModalOpen(true)}
-            className="btn-shoujo-primary px-7 py-3 rounded-full text-xs font-serif-sc font-medium tracking-wider cursor-pointer inline-flex items-center gap-2"
+            className="btn-shoujo-primary px-6 py-3 rounded-full text-xs font-serif-sc font-medium tracking-wider cursor-pointer inline-flex items-center gap-2 whitespace-nowrap"
           >
-            <Heart className="w-3.5 h-3.5 fill-white" />
-            <span>上传属于你们的第一张照片</span>
+            <Heart className="w-3.5 h-3.5 fill-white shrink-0" />
+            <span>上传第一张回忆照片</span>
           </button>
         </div>
       ) : (

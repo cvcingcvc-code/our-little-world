@@ -129,6 +129,7 @@ export default function GiftsView() {
       {/* 4K 礼盒惊喜主题封面 + 全屏沉浸柔焦背景 */}
       <ExhibitionCover
         coverImage="/winter-gift-hd.jpg"
+        coverPosition="object-right md:object-[center_60%]"
         badge="🎀 心动礼遇 · GIFT & SURPRISE MUSEUM"
         englishTag="CHAPTER 03 // PRECIOUS GIFTS"
         title="礼物与惊喜博物馆"
@@ -168,21 +169,21 @@ export default function GiftsView() {
 
       {/* 真实空状态或礼物卡片 */}
       {filteredGifts.length === 0 ? (
-        <div className="p-16 sm:p-20 text-center rounded-3xl bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-dashed border-slate-300 dark:border-white/10 text-slate-400 space-y-4 max-w-2xl mx-auto">
-          <div className="w-16 h-16 rounded-3xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200/50 flex items-center justify-center mx-auto text-indigo-400">
+        <div className="relative z-10 p-14 sm:p-20 text-center rounded-[2rem] glass-crystal border border-pink-200/25 text-slate-300 space-y-5 max-w-2xl mx-auto">
+          <div className="w-16 h-16 rounded-3xl bg-pink-400/15 border border-pink-300/30 flex items-center justify-center mx-auto text-pink-300 shadow-[0_0_25px_rgba(244,114,182,0.2)]">
             <Gift className="w-8 h-8" />
           </div>
-          <div className="space-y-1">
-            <h3 className="font-serif text-lg text-slate-700 dark:text-slate-200 font-medium">
+          <div className="space-y-2">
+            <h3 className="font-serif-sc text-xl text-white font-light tracking-wider">
               展馆尚无礼物记录
             </h3>
-            <p className="text-xs text-slate-500 font-light max-w-sm mx-auto leading-relaxed">
+            <p className="text-xs text-slate-300/80 font-light max-w-sm mx-auto leading-relaxed">
               无论是生日惊喜、节日花束，还是写在便签上的真情手写信，都可以在这里为它开辟专属展位。
             </p>
           </div>
           <button
             onClick={() => setModalOpen(true)}
-            className="px-6 py-2.5 rounded-full bg-gradient-to-r from-indigo-500 to-rose-500 text-white text-xs font-medium shadow-md hover:scale-105 transition cursor-pointer inline-flex items-center gap-1.5 border-none"
+            className="btn-shoujo-primary px-7 py-3 rounded-full text-xs font-serif-sc font-medium tracking-wider cursor-pointer inline-flex items-center gap-1.5 whitespace-nowrap"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>记录你们的第一件礼物</span>

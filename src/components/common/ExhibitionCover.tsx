@@ -6,6 +6,7 @@ import { Sparkles } from "lucide-react";
 
 interface ExhibitionCoverProps {
   coverImage: string;
+  coverPosition?: string;
   badge: string;
   englishTag: string;
   title: string;
@@ -15,6 +16,7 @@ interface ExhibitionCoverProps {
 
 export default function ExhibitionCover({
   coverImage,
+  coverPosition = "object-right md:object-[center_25%]",
   badge,
   englishTag,
   title,
@@ -49,7 +51,7 @@ export default function ExhibitionCover({
             fill
             priority
             quality={100}
-            className="object-cover object-right md:object-[center_22%] brightness-100 transition-transform duration-1000"
+            className={`object-cover ${coverPosition} brightness-100 transition-transform duration-1000`}
           />
           {/* 左侧柔和暗粉紫渐变，保证左边文字极清，右边动漫人物清澈甜美 */}
           <div className="absolute inset-0 bg-gradient-to-r from-slate-950/92 via-slate-950/65 to-slate-950/15" />

@@ -263,3 +263,61 @@ body {
   background: rgba(251, 207, 232, 0.22);
   border-color: rgba(249, 168, 212, 0.5);
 }
+
+/* ================= 少女感深紫磨砂底部导航与微型粒子动效 ================= */
+.shoujo-bottom-nav {
+  background: rgba(23, 22, 44, 0.84);
+  backdrop-filter: blur(24px) saturate(170%);
+  -webkit-backdrop-filter: blur(24px) saturate(170%);
+  border: 1px solid rgba(239, 166, 201, 0.36);
+  box-shadow:
+    0 12px 36px rgba(8, 12, 32, 0.58),
+    0 0 24px rgba(244, 143, 181, 0.16),
+    inset 0 1px 1px rgba(255, 225, 240, 0.22);
+}
+
+.shoujo-nav-item {
+  border: 1px solid transparent;
+  transition:
+    background 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.shoujo-nav-item:active {
+  transform: scale(0.92);
+}
+
+.shoujo-nav-item-active {
+  background: linear-gradient(145deg, rgba(245, 166, 195, 0.25), rgba(166, 141, 228, 0.22));
+  border-color: rgba(239, 166, 201, 0.52);
+  color: #ffdbeb;
+  box-shadow:
+    0 0 16px rgba(242, 147, 188, 0.22),
+    inset 0 1px 1px rgba(255, 235, 245, 0.25);
+}
+
+@keyframes microParticleRise {
+  0% {
+    opacity: 0;
+    transform: translateY(4px) scale(0.5);
+  }
+  30% {
+    opacity: 0.9;
+    transform: translateY(-2px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.7);
+  }
+}
+
+.animate-micro-particle-1 {
+  animation: microParticleRise 2.4s ease-out infinite;
+}
+
+.animate-micro-particle-2 {
+  animation: microParticleRise 2.8s ease-out 0.7s infinite;
+}

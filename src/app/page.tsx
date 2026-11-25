@@ -49,7 +49,7 @@ export default function AppHome() {
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
 
       {/* 核心视图渲染区 */}
-      <main className="flex-1 pb-24 lg:pb-12">
+      <main className="flex-1 pb-12">
         {activeTab === "home" && <HomeView onNavigate={setActiveTab} />}
         {activeTab === "gallery" && <GalleryView />}
         {activeTab === "food" && <FoodView />}
@@ -63,8 +63,8 @@ export default function AppHome() {
         {activeTab === "interactive" && <InteractiveView />}
       </main>
 
-      {/* 优雅温暖的页脚 */}
-      <footer className="border-t border-slate-200/60 dark:border-slate-800/60 py-6 px-4 text-center text-xs text-slate-400 dark:text-slate-500 space-y-2">
+      {/* 优雅温暖的页脚（移动端预留底部导航安全区，防止遮挡） */}
+      <footer className="relative z-10 border-t border-pink-200/15 py-6 pb-28 lg:pb-8 px-4 text-center text-xs text-slate-400 space-y-2">
         <div className="flex items-center justify-center gap-1.5 font-light">
           <span>Our Little World</span>
           <span>·</span>

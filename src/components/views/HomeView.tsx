@@ -317,7 +317,7 @@ export default function HomeView({ onNavigate }: { onNavigate: (tab: NavTab) => 
         </div>
 
         {/* 右下角：超高清冬日场景一键切换控制器 (Scene Switcher) */}
-        <div className="absolute bottom-8 right-6 lg:right-12 z-20 hidden sm:flex items-center gap-2 p-1.5 rounded-full glass-crystal border border-white/20 shadow-2xl">
+        <div className="absolute bottom-8 right-6 lg:right-12 z-20 hidden sm:flex items-center gap-1.5 p-1.5 rounded-full shoujo-bottom-nav shadow-2xl">
           {(["street", "cafe", "gift"] as WinterScene[]).map((scKey) => {
             const sc = SCENE_CONFIG[scKey];
             const Icon = sc.icon;
@@ -327,13 +327,13 @@ export default function HomeView({ onNavigate }: { onNavigate: (tab: NavTab) => 
                 key={scKey}
                 onClick={() => setCurrentScene(scKey)}
                 title={`切换至【${sc.name}】超清场景`}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-serif-sc tracking-wider transition-all flex items-center gap-1.5 cursor-pointer border-none outline-none ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-serif-sc tracking-wider transition-all flex items-center gap-1.5 cursor-pointer outline-none ${
                   isSelected
-                    ? "bg-white text-slate-950 font-medium shadow-md scale-105"
-                    : "text-slate-300 hover:text-white hover:bg-white/10"
+                    ? "btn-shoujo-pill-active scale-105"
+                    : "text-[#d2c4e1] hover:text-[#ffdbeb] hover:bg-white/10 border border-transparent"
                 }`}
               >
-                <Icon className={`w-3.5 h-3.5 ${isSelected ? "text-rose-500" : ""}`} />
+                <Icon className={`w-3.5 h-3.5 ${isSelected ? "text-white" : "text-pink-300"}`} />
                 <span>{sc.name}</span>
               </button>
             );
@@ -367,9 +367,9 @@ export default function HomeView({ onNavigate }: { onNavigate: (tab: NavTab) => 
             <button
               onClick={nextWhisper}
               title="抽取下一条心动微语"
-              className="self-end sm:self-center px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-xs text-slate-200 flex items-center gap-1.5 transition-all cursor-pointer border-none"
+              className="self-end sm:self-center btn-shoujo-glass px-4 py-2 rounded-full text-xs flex items-center gap-1.5 cursor-pointer"
             >
-              <RefreshCw className="w-3.5 h-3.5 text-sky-300" />
+              <Sparkles className="w-3.5 h-3.5 text-pink-300" />
               <span>翻一页</span>
             </button>
           </div>

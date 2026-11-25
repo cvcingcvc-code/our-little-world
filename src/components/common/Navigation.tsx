@@ -4,12 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useApp } from "@/context/AppContext";
 import {
   Heart,
-  Camera,
-  UtensilsCrossed,
-  Gift,
-  ListTodo,
   Milestone,
-  Sparkles,
   Trophy,
   Mail,
   Users2,
@@ -24,6 +19,14 @@ import {
   ChevronDown,
   Disc,
 } from "lucide-react";
+import {
+  ShoujoHomeIcon,
+  ShoujoAlbumIcon,
+  ShoujoStarsIcon,
+  ShoujoFoodIcon,
+  ShoujoWishesIcon,
+  ShoujoGiftIcon,
+} from "@/components/icons/ShoujoNavIcons";
 import AuthModal from "./AuthModal";
 
 export type NavTab =
@@ -58,28 +61,33 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
+  const [clickedTab, setClickedTab] = useState<NavTab | null>(null);
   const moreMenuRef = useRef<HTMLDivElement | null>(null);
 
-  // 核心置顶 5 大展厅
-  const primaryNavItems: { id: NavTab; label: string; icon: React.ElementType }[] = [
-    { id: "home", label: "冬日首页", icon: Heart },
-    { id: "gallery", label: "可爱收藏馆", icon: Camera },
-    { id: "food", label: "美食日记", icon: UtensilsCrossed },
-    { id: "gifts", label: "礼物博物馆", icon: Gift },
-    { id: "starry", label: "专属星空", icon: Sparkles },
+  // 核心 6 大少女感 SVG 图标入口（严格对应：首页爱心小屋、相册蝴蝶结相机、星空月亮星星、美食草莓蛋糕、愿望少女手账、礼物丝带礼盒）
+  const primaryNavItems: {
+    id: NavTab;
+    label: string;
+    shortLabel: string;
+    Icon: React.ComponentType<{ className?: string }>;
+    particleColor: string;
+  }[] = [
+    { id: "home", label: "冬日首页", shortLabel: "首页", Icon: ShoujoHomeIcon, particleColor: "#F47FA9" },
+    { id: "gallery", label: "可爱相册", shortLabel: "相册", Icon: ShoujoAlbumIcon, particleColor: "#FFB9D1" },
+    { id: "starry", label: "专属星空", shortLabel: "星空", Icon: ShoujoStarsIcon, particleColor: "#FFE6A6" },
+    { id: "food", label: "美食日记", shortLabel: "美食", Icon: ShoujoFoodIcon, particleColor: "#F47FA9" },
+    { id: "wishes", label: "愿望手账", shortLabel: "愿望", Icon: ShoujoWishesIcon, particleColor: "#E3D6FF" },
+    { id: "gifts", label: "丝带礼盒", shortLabel: "礼物", Icon: ShoujoGiftIcon, particleColor: "#FFD1E6" },
   ];
 
-  // 更多深度展厅（收纳于优雅子菜单中，告别顶部杂乱拥挤）
+  // 更多深度展厅（收纳于优雅子菜单中）
   const secondaryNavItems: { id: NavTab; label: string; icon: React.ElementType; desc: string }[] = [
-    { id: "wishes", label: "100件小事", icon: ListTodo, desc: "共同奔赴的愿望与约会计划" },
     { id: "timeline", label: "恋爱时间轴", icon: Milestone, desc: "依年月排列的岁月记忆画卷" },
     { id: "diary", label: "恋爱日记", icon: BookHeart, desc: "日常絮语、心情与想说的话" },
     { id: "achievements", label: "恋爱成就", icon: Trophy, desc: "根据真实历程解锁的共同里程碑" },
     { id: "capsule", label: "时光信箱", icon: Mail, desc: "寄往未来的倒计时情书" },
     { id: "interactive", label: "双人互动", icon: Users2, desc: "今日想你、秘密留言与回忆盲盒" },
   ];
-
-  const allNavItems = [...primaryNavItems, ...secondaryNavItems];
 
   // 点击外部关闭更多子菜单
   useEffect(() => {
@@ -93,6 +101,8 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
   }, []);
 
   const onNavigateTab = (id: NavTab) => {
+    setClickedTab(id);
+    setTimeout(() => setClickedTab(null), 380);
     onTabChange(id);
     setMobileDrawerOpen(false);
     setMoreMenuOpen(false);
@@ -103,44 +113,48 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
 
   return (
     <>
-      {/* 顶部主导航（高定冰晶磨砂浮岛） */}
-      <header className="sticky top-0 z-40 w-full transition-all duration-500 bg-slate-950/70 backdrop-blur-2xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
+      {/* 顶部主导航（深紫磨砂玻璃浮岛） */}
+      <header className="sticky top-0 z-40 w-full transition-all duration-500 bg-[#17162c]/80 backdrop-blur-2xl border-b border-[#efa6c9]/25 shadow-[0_4px_30px_rgba(8,12,32,0.45)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between gap-4">
           {/* Logo 区域 */}
           <button
             onClick={() => onNavigateTab("home")}
             className="flex items-center gap-3 text-left group cursor-pointer border-none bg-transparent p-0 outline-none"
           >
-            <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-rose-500 via-pink-500 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-rose-500/25 group-hover:scale-105 transition-transform">
+            <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#f472b6] via-[#fb7185] to-[#c084fc] flex items-center justify-center text-white shadow-md shadow-pink-500/25 group-hover:scale-105 transition-transform">
               <Heart className="w-4 h-4 fill-white" />
             </div>
             <div>
-              <span className="font-serif-sc text-base tracking-wider font-normal text-white block leading-tight">
+              <span className="font-serif-sc text-base tracking-wider font-normal text-[#fce5f0] block leading-tight">
                 Our Little World
               </span>
-              <span className="text-[10px] text-slate-400 font-cinzel tracking-[0.2em] block leading-none">
+              <span className="text-[10px] text-[#beb2d2] font-cinzel tracking-[0.2em] block leading-none">
                 WINTER ARCHIVE ❄️
               </span>
             </div>
           </button>
 
-          {/* 桌面端导航：核心 5 项 + 更多下拉，留白得体，从容高级 */}
-          <nav className="hidden lg:flex items-center gap-1.5 p-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl">
+          {/* 桌面端导航：6 大少女感定制 SVG 入口 + 更多展馆下拉 */}
+          <nav className="hidden lg:flex items-center gap-1 p-1 rounded-full bg-[#211c43]/55 border border-[#efa6c9]/25 backdrop-blur-xl">
             {primaryNavItems.map((item) => {
-              const Icon = item.icon;
+              const { Icon } = item;
               const isActive = activeTab === item.id;
               return (
                 <button
                   key={item.id}
                   onClick={() => onNavigateTab(item.id)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-serif-sc tracking-wider transition-all duration-300 flex items-center gap-1.5 cursor-pointer border-none outline-none ${
+                  className={`relative px-3.5 py-1.5 rounded-full text-xs font-serif-sc tracking-wider flex items-center gap-1.5 cursor-pointer outline-none shoujo-nav-item ${
                     isActive
-                      ? "bg-white/20 text-white font-medium shadow-md shadow-rose-500/10 border border-white/25"
-                      : "text-slate-300 hover:text-white hover:bg-white/10"
+                      ? "shoujo-nav-item-active font-medium"
+                      : "text-[#d2c4e1] hover:text-[#ffdbeb] hover:bg-white/5"
                   }`}
                 >
-                  <Icon className={`w-3.5 h-3.5 ${isActive ? "text-rose-400" : "text-slate-400"}`} />
-                  <span>{item.label}</span>
+                  <Icon
+                    className={`w-5 h-5 transition-transform duration-300 ${
+                      isActive ? "scale-110 -translate-y-0.5" : "opacity-85 group-hover:opacity-100"
+                    }`}
+                  />
+                  <span>{item.shortLabel}</span>
                 </button>
               );
             })}
@@ -149,10 +163,10 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
             <div className="relative" ref={moreMenuRef}>
               <button
                 onClick={() => setMoreMenuOpen(!moreMenuOpen)}
-                className={`px-3 py-1.5 rounded-full text-xs font-serif-sc tracking-wider transition-all duration-300 flex items-center gap-1 cursor-pointer border-none outline-none ${
+                className={`px-3 py-1.5 rounded-full text-xs font-serif-sc tracking-wider transition-all duration-300 flex items-center gap-1 cursor-pointer outline-none shoujo-nav-item ${
                   isSecondaryActive || moreMenuOpen
-                    ? "bg-rose-500/20 text-rose-200 border border-rose-400/30"
-                    : "text-slate-300 hover:text-white hover:bg-white/10"
+                    ? "shoujo-nav-item-active"
+                    : "text-[#d2c4e1] hover:text-[#ffdbeb] hover:bg-white/5"
                 }`}
               >
                 <span>更多展馆</span>
@@ -160,8 +174,8 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
               </button>
 
               {moreMenuOpen && (
-                <div className="absolute top-full right-0 mt-2.5 w-64 p-2 rounded-2xl glass-crystal border border-white/20 shadow-2xl animate-fadeIn z-50">
-                  <div className="px-3 py-1.5 text-[10px] font-cinzel text-slate-400 tracking-[0.2em] border-b border-white/10 mb-1">
+                <div className="absolute top-full right-0 mt-2.5 w-64 p-2 rounded-3xl shoujo-bottom-nav animate-fadeIn z-50">
+                  <div className="px-3 py-1.5 text-[10px] font-cinzel text-[#beb2d2] tracking-[0.2em] border-b border-[#efa6c9]/20 mb-1">
                     SPECIAL EXHIBITIONS
                   </div>
                   {secondaryNavItems.map((item) => {
@@ -171,16 +185,16 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
                       <button
                         key={item.id}
                         onClick={() => onNavigateTab(item.id)}
-                        className={`w-full px-3 py-2 rounded-xl text-left transition flex items-start gap-2.5 cursor-pointer border-none outline-none ${
+                        className={`w-full px-3 py-2 rounded-2xl text-left transition flex items-start gap-2.5 cursor-pointer border-none outline-none ${
                           isActive
-                            ? "bg-rose-500/20 text-rose-200"
-                            : "hover:bg-white/10 text-slate-300 hover:text-white"
+                            ? "bg-pink-400/20 text-[#ffdbeb]"
+                            : "hover:bg-white/10 text-[#d2c4e1] hover:text-white"
                         }`}
                       >
-                        <Icon className="w-4 h-4 mt-0.5 text-rose-400 shrink-0" />
+                        <Icon className="w-4 h-4 mt-0.5 text-pink-300 shrink-0" />
                         <div>
                           <div className="text-xs font-serif-sc font-medium">{item.label}</div>
-                          <div className="text-[10px] text-slate-400 font-light leading-tight">{item.desc}</div>
+                          <div className="text-[10px] text-[#beb2d2] font-light leading-tight">{item.desc}</div>
                         </div>
                       </button>
                     );
@@ -191,28 +205,27 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
           </nav>
 
           {/* 右侧控制中心：黑胶唱片微型播放器 + 环境控制 + 权限状态 */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-2.5">
             {/* 优雅黑胶唱片迷你播放器 */}
             <button
               onClick={toggleBgm}
               title={isBgmPlaying ? "正在播放: 冬日纯净纯音 (点击暂停)" : "点击播放治愈冬日纯音"}
               className={`group flex items-center gap-2 px-3 py-1.5 rounded-full text-xs transition-all cursor-pointer border outline-none ${
                 isBgmPlaying
-                  ? "bg-rose-500/20 border-rose-400/40 text-rose-200 shadow-[0_0_15px_rgba(244,63,94,0.25)]"
-                  : "bg-white/5 border-white/10 text-slate-400 hover:text-white hover:bg-white/10"
+                  ? "bg-pink-500/20 border-pink-300/45 text-pink-100 shadow-[0_0_15px_rgba(244,114,182,0.3)]"
+                  : "bg-white/5 border-white/15 text-[#d2c4e1] hover:text-white hover:bg-white/10"
               }`}
             >
               <div className="relative w-5 h-5 flex items-center justify-center">
                 <Disc
-                  className={`w-5 h-5 text-rose-400 ${isBgmPlaying ? "animate-vinyl text-rose-300" : ""}`}
+                  className={`w-5 h-5 text-pink-300 ${isBgmPlaying ? "animate-vinyl text-pink-200" : ""}`}
                 />
-                <span className="absolute w-1.5 h-1.5 rounded-full bg-slate-900 border border-rose-400" />
+                <span className="absolute w-1.5 h-1.5 rounded-full bg-[#17162c] border border-pink-300" />
               </div>
-              {/* 音频均衡器小动画柱 */}
               <div className="hidden sm:flex items-end gap-0.5 h-3">
-                <span className={`w-0.5 rounded-full bg-rose-400 transition-all ${isBgmPlaying ? "h-3 animate-pulse" : "h-1"}`} />
-                <span className={`w-0.5 rounded-full bg-rose-300 transition-all ${isBgmPlaying ? "h-2 animate-bounce" : "h-1"}`} />
-                <span className={`w-0.5 rounded-full bg-rose-400 transition-all ${isBgmPlaying ? "h-3.5 animate-pulse" : "h-1"}`} />
+                <span className={`w-0.5 rounded-full bg-pink-300 transition-all ${isBgmPlaying ? "h-3 animate-pulse" : "h-1"}`} />
+                <span className={`w-0.5 rounded-full bg-pink-200 transition-all ${isBgmPlaying ? "h-2 animate-bounce" : "h-1"}`} />
+                <span className={`w-0.5 rounded-full bg-pink-300 transition-all ${isBgmPlaying ? "h-3.5 animate-pulse" : "h-1"}`} />
               </div>
             </button>
 
@@ -222,8 +235,8 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
               title={isSnowing ? "暂停漫天飘雪" : "开启冬日漫雪"}
               className={`p-2 rounded-full text-xs transition cursor-pointer border outline-none ${
                 isSnowing
-                  ? "bg-sky-500/20 text-sky-300 border-sky-400/30"
-                  : "bg-white/5 border-white/10 text-slate-400 hover:text-white"
+                  ? "bg-purple-400/20 text-purple-200 border-purple-300/35"
+                  : "bg-white/5 border-white/15 text-[#d2c4e1] hover:text-white"
               }`}
             >
               <Snowflake className="w-4 h-4" />
@@ -233,9 +246,9 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
             <button
               onClick={toggleNightMode}
               title={isNightMode ? "切换为晨雪日光模式" : "切换为星夜暗语模式"}
-              className="p-2 rounded-full bg-white/5 border border-white/10 text-slate-300 hover:text-white transition cursor-pointer outline-none"
+              className="p-2 rounded-full bg-white/5 border border-white/15 text-[#d2c4e1] hover:text-white transition cursor-pointer outline-none"
             >
-              {isNightMode ? <Sun className="w-4 h-4 text-amber-300" /> : <Moon className="w-4 h-4 text-indigo-300" />}
+              {isNightMode ? <Sun className="w-4 h-4 text-amber-200" /> : <Moon className="w-4 h-4 text-purple-300" />}
             </button>
 
             {/* 私人权限状态胶囊 */}
@@ -243,18 +256,18 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
               onClick={() => setAuthModalOpen(true)}
               className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-serif-sc transition cursor-pointer border outline-none ${
                 isAuthenticated
-                  ? "bg-emerald-500/20 text-emerald-200 border-emerald-400/30 shadow-sm"
-                  : "bg-white/5 text-slate-300 hover:text-white border-white/10"
+                  ? "bg-emerald-500/20 text-emerald-200 border-emerald-400/35 shadow-sm"
+                  : "bg-white/5 text-[#d2c4e1] hover:text-white border-white/15"
               }`}
             >
               {isAuthenticated ? (
                 <>
-                  <Unlock className="w-3.5 h-3.5 text-emerald-400" />
+                  <Unlock className="w-3.5 h-3.5 text-emerald-300" />
                   <span>专属模式</span>
                 </>
               ) : (
                 <>
-                  <Lock className="w-3.5 h-3.5 text-slate-400" />
+                  <Lock className="w-3.5 h-3.5 text-pink-300" />
                   <span>访客模式</span>
                 </>
               )}
@@ -263,7 +276,8 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
             {/* 移动端汉堡菜单触发器 */}
             <button
               onClick={() => setMobileDrawerOpen(true)}
-              className="lg:hidden p-2 rounded-xl bg-white/5 border border-white/10 text-slate-200 hover:text-white cursor-pointer"
+              aria-label="展开更多展厅菜单"
+              className="lg:hidden p-2 rounded-xl bg-white/5 border border-[#efa6c9]/30 text-[#ffdbeb] hover:bg-white/10 cursor-pointer"
             >
               <Menu className="w-5 h-5" />
             </button>
@@ -274,55 +288,81 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
       {/* 移动端全屏抽屉侧边栏 */}
       {mobileDrawerOpen && (
         <div className="fixed inset-0 z-50 lg:hidden flex justify-end bg-black/70 backdrop-blur-md animate-fadeIn">
-          <div className="w-80 max-w-[85vw] h-full bg-slate-950/95 border-l border-white/15 p-6 flex flex-col justify-between overflow-y-auto">
+          <div className="w-80 max-w-[85vw] h-full bg-[#17162c]/95 border-l border-[#efa6c9]/30 p-6 flex flex-col justify-between overflow-y-auto">
             <div className="space-y-6">
-              <div className="flex items-center justify-between pb-4 border-b border-white/10">
+              <div className="flex items-center justify-between pb-4 border-b border-[#efa6c9]/20">
                 <div className="flex items-center gap-2">
-                  <Heart className="w-4 h-4 fill-rose-500 text-rose-500" />
-                  <span className="font-serif-sc text-sm text-white">恋爱纪念馆 · 展厅导览</span>
+                  <Heart className="w-4 h-4 fill-pink-400 text-pink-400" />
+                  <span className="font-serif-sc text-sm text-[#fce5f0]">恋爱纪念馆 · 全部展厅</span>
                 </div>
                 <button
                   onClick={() => setMobileDrawerOpen(false)}
-                  className="p-1 text-slate-400 hover:text-white border-none bg-transparent cursor-pointer"
+                  className="p-1 text-[#beb2d2] hover:text-white border-none bg-transparent cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="space-y-1">
-                {allNavItems.map((item) => {
+              <div className="space-y-1.5">
+                {primaryNavItems.map((item) => {
+                  const { Icon } = item;
+                  const isActive = activeTab === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => onNavigateTab(item.id)}
+                      className={`w-full px-4 py-2.5 rounded-2xl text-left text-xs font-serif-sc tracking-wider flex items-center justify-between transition cursor-pointer outline-none ${
+                        isActive
+                          ? "shoujo-nav-item-active font-medium"
+                          : "text-[#d2c4e1] hover:bg-white/5 hover:text-white border border-transparent"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Icon className="w-5 h-5 shrink-0" />
+                        <span>{item.label}</span>
+                      </div>
+                      {isActive && <span className="w-1.5 h-1.5 rounded-full bg-pink-300" />}
+                    </button>
+                  );
+                })}
+
+                <div className="pt-3 pb-1 px-2 text-[10px] font-cinzel text-[#beb2d2] tracking-[0.2em]">
+                  MORE EXHIBITIONS
+                </div>
+
+                {secondaryNavItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = activeTab === item.id;
                   return (
                     <button
                       key={item.id}
                       onClick={() => onNavigateTab(item.id)}
-                      className={`w-full px-4 py-3 rounded-2xl text-left text-xs font-serif-sc tracking-wider flex items-center justify-between transition cursor-pointer border-none outline-none ${
+                      className={`w-full px-4 py-2.5 rounded-2xl text-left text-xs font-serif-sc tracking-wider flex items-center justify-between transition cursor-pointer outline-none ${
                         isActive
-                          ? "bg-rose-500/25 text-rose-200 font-medium border border-rose-400/30"
-                          : "text-slate-300 hover:bg-white/5 hover:text-white"
+                          ? "shoujo-nav-item-active font-medium"
+                          : "text-[#d2c4e1] hover:bg-white/5 hover:text-white border border-transparent"
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <Icon className={`w-4 h-4 ${isActive ? "text-rose-400" : "text-slate-400"}`} />
+                        <Icon className={`w-4 h-4 ${isActive ? "text-pink-300" : "text-[#beb2d2]"}`} />
                         <span>{item.label}</span>
                       </div>
-                      {isActive && <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />}
+                      {isActive && <span className="w-1.5 h-1.5 rounded-full bg-pink-300" />}
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            <div className="pt-6 border-t border-white/10 space-y-3">
+            <div className="pt-6 border-t border-[#efa6c9]/20 space-y-3">
               <button
                 onClick={() => {
                   setMobileDrawerOpen(false);
                   setAuthModalOpen(true);
                 }}
-                className="w-full py-2.5 px-4 rounded-xl bg-white/10 text-xs text-slate-200 flex items-center justify-center gap-2"
+                className="w-full py-2.5 px-4 rounded-full btn-shoujo-glass text-xs flex items-center justify-center gap-2 cursor-pointer"
               >
-                {isAuthenticated ? <Unlock className="w-3.5 h-3.5 text-emerald-400" /> : <Lock className="w-3.5 h-3.5" />}
+                {isAuthenticated ? <Unlock className="w-3.5 h-3.5 text-emerald-300" /> : <Lock className="w-3.5 h-3.5 text-pink-300" />}
                 <span>{isAuthenticated ? "当前处于专属模式" : "验证私密通行码"}</span>
               </button>
             </div>
@@ -330,25 +370,75 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
         </div>
       )}
 
-      {/* 移动端底部悬浮药丸胶囊 Dock (仅在移动端展示，常驻 5 项核心) */}
-      <nav className="lg:hidden fixed bottom-4 inset-x-4 z-40 h-14 rounded-full bg-slate-950/85 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.6)] flex items-center justify-around px-2">
-        {primaryNavItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = activeTab === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => onNavigateTab(item.id)}
-              className={`flex flex-col items-center justify-center gap-0.5 px-3 py-1 rounded-full transition-all border-none bg-transparent cursor-pointer ${
-                isActive ? "text-rose-400 scale-110 font-medium" : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              <Icon className="w-4 h-4" />
-              <span className="text-[10px] font-serif-sc leading-none">{item.label.replace("冬日", "").replace("专属", "")}</span>
-            </button>
-          );
-        })}
-      </nav>
+      {/* ================= 移动端底部少女感深紫磨砂悬浮导航栏 ================= */}
+      <div
+        className="lg:hidden fixed bottom-0 inset-x-0 z-40 px-2.5 sm:px-4 pointer-events-none"
+        style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 10px)" }}
+      >
+        <nav
+          aria-label="纪念馆底部导航"
+          className="shoujo-bottom-nav pointer-events-auto max-w-md mx-auto rounded-[28px] px-1.5 py-2 flex items-center justify-between gap-0.5"
+        >
+          {primaryNavItems.map((item) => {
+            const { Icon } = item;
+            const isActive = activeTab === item.id;
+            const isClicked = clickedTab === item.id;
+
+            return (
+              <button
+                key={item.id}
+                type="button"
+                aria-pressed={isActive}
+                onClick={() => onNavigateTab(item.id)}
+                className={`relative flex-1 min-w-0 py-1.5 px-0.5 rounded-[18px] flex flex-col items-center justify-center gap-0.5 cursor-pointer outline-none select-none shoujo-nav-item ${
+                  isActive
+                    ? "shoujo-nav-item-active"
+                    : "text-[#d2c4e1] hover:text-[#ffdbeb] bg-transparent"
+                }`}
+              >
+                {/* 选中状态：柔和微光微型粒子动效（星芒与光点） */}
+                {isActive && (
+                  <div className="absolute inset-0 pointer-events-none overflow-visible">
+                    <span
+                      className="absolute -top-0.5 right-2 w-1.5 h-1.5 rounded-full animate-micro-particle-1"
+                      style={{ backgroundColor: item.particleColor, boxShadow: `0 0 6px ${item.particleColor}` }}
+                    />
+                    <span
+                      className="absolute top-1 left-2 text-[8px] leading-none animate-micro-particle-2"
+                      style={{ color: "#FFE6A6" }}
+                    >
+                      ✦
+                    </span>
+                  </div>
+                )}
+
+                {/* 点击瞬间的独立柔和粉紫涟漪反馈 */}
+                {isClicked && (
+                  <span className="absolute inset-0 rounded-[18px] bg-pink-300/25 animate-ping pointer-events-none" />
+                )}
+
+                {/* 定制马卡龙 SVG 图标（选中轻微放大上浮） */}
+                <Icon
+                  className={`w-7 h-7 max-[370px]:w-6 max-[370px]:h-6 transition-all duration-300 ${
+                    isActive
+                      ? "opacity-100 -translate-y-0.5 scale-110 drop-shadow-[0_4px_10px_rgba(244,143,181,0.45)]"
+                      : "opacity-80 group-hover:opacity-100"
+                  }`}
+                />
+
+                {/* 清晰可读的标签文案 */}
+                <span
+                  className={`text-[11px] max-[370px]:text-[10px] font-serif-sc leading-none tracking-tight whitespace-nowrap transition-colors ${
+                    isActive ? "text-[#ffdbeb] font-medium" : "text-[#d2c4e1]/90 font-light"
+                  }`}
+                >
+                  {item.shortLabel}
+                </span>
+              </button>
+            );
+          })}
+        </nav>
+      </div>
 
       {/* 私密鉴权模态框 */}
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />

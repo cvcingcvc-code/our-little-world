@@ -2,7 +2,7 @@ export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 /**
  * 为 public 目录下的静态资源路径自动补全 basePath
- * 兼容 Vercel 根路径部署 (/) 与 GitHub Pages 子路径部署 (/our-little-world)
+ * 三重保障：兼容构建期 NEXT_PUBLIC_BASE_PATH、GitHub Pages 子路径运行时识别与 Vercel 根路径部署
  */
 export function withBasePath(path: string): string {
   if (!path) return path;
@@ -14,8 +14,16 @@ export function withBasePath(path: string): string {
   ) {
     return path;
   }
-  if (!BASE_PATH || path.startsWith(BASE_PATH)) {
+
+  let effectiveBase = BASE_PATH;
+  if (!effectiveBase && typeof window !== "undefined") {
+    if (window.location.pathname.startsWith("/our-little-world")) {
+      effectiveBase = "/our-little-world";
+    }
+  }
+
+  if (!effectiveBase || path.startsWith(effectiveBase)) {
     return path;
   }
-  return `${BASE_PATH}${path.startsWith("/") ? path : `/${path}`}`;
+  return `${effectiveBase}${path.startsWith("/") ? path : `/${path}`}`;
 }

@@ -6,6 +6,7 @@ import { useApp } from "@/context/AppContext";
 import { StarMemory } from "@/types";
 import { getStarMemories, saveStarMemory, deleteStarMemory } from "@/lib/storage";
 import ExhibitionCover from "@/components/common/ExhibitionCover";
+import { withBasePath } from "@/lib/assets";
 import {
   Sparkles,
   Plus,
@@ -240,7 +241,7 @@ export default function StarryView() {
       >
         {/* 梦幻星夜底图叠加 */}
         <Image
-          src="/winter-hero-hd.jpg"
+          src={withBasePath("/winter-hero-hd.jpg")}
           alt="冬夜星河底图"
           fill
           className="object-cover object-center opacity-28 filter hue-rotate-15 contrast-110 pointer-events-none"

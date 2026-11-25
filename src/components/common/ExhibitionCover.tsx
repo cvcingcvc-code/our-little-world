@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { Sparkles } from "lucide-react";
+import { withBasePath } from "@/lib/assets";
 
 interface ExhibitionCoverProps {
   coverImage: string;
@@ -28,7 +29,7 @@ export default function ExhibitionCover({
       {/* 1. 全屏固定柔和沉浸动漫背景层（确保切换至任何展厅都有冬日原画陪伴） */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden select-none">
         <Image
-          src={coverImage}
+          src={withBasePath(coverImage)}
           alt={title}
           fill
           priority
@@ -46,7 +47,7 @@ export default function ExhibitionCover({
         {/* 封面右侧高清原画透出 */}
         <div className="absolute inset-0 pointer-events-none">
           <Image
-            src={coverImage}
+            src={withBasePath(coverImage)}
             alt={title}
             fill
             priority

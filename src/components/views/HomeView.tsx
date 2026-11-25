@@ -25,6 +25,7 @@ import {
 import { NavTab } from "../common/Navigation";
 import { getActiveSiteConfig, saveActiveSiteStartDate } from "@/config/site";
 import { getPhotos, getFoodRecords, getGiftRecords, getWishItems } from "@/lib/storage";
+import { withBasePath } from "@/lib/assets";
 
 type WinterScene = "street" | "cafe" | "gift";
 
@@ -168,7 +169,7 @@ export default function HomeView({ onNavigate }: { onNavigate: (tab: NavTab) => 
         <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
           <Image
             key={currentScene}
-            src={activeSceneInfo.image}
+            src={withBasePath(activeSceneInfo.image)}
             alt={activeSceneInfo.name}
             fill
             priority
@@ -404,7 +405,7 @@ export default function HomeView({ onNavigate }: { onNavigate: (tab: NavTab) => 
               {/* 相纸内部照片窗口 */}
               <div className="relative w-full h-52 rounded-md overflow-hidden bg-slate-900">
                 <Image
-                  src="/winter-close-hd.jpg"
+                  src={withBasePath("/winter-close-hd.jpg")}
                   alt="可爱相册缩略"
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-700 filter brightness-95"

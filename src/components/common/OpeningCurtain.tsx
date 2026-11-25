@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Sparkles, Heart } from "lucide-react";
 import { siteConfig } from "@/config/site";
+import { withBasePath } from "@/lib/assets";
 
 export default function OpeningCurtain({ onFinish }: { onFinish?: () => void }) {
   const [show, setShow] = useState<boolean>(true);
@@ -39,7 +40,7 @@ export default function OpeningCurtain({ onFinish }: { onFinish?: () => void }) 
       {/* 4K 超高清全景背景与电影级慢镜微缩放 */}
       <div className="absolute inset-0 bg-slate-950 -z-10">
         <Image
-          src="/winter-hero-hd.jpg"
+          src={withBasePath("/winter-hero-hd.jpg")}
           alt="冬日恋歌主视觉"
           fill
           priority

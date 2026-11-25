@@ -169,15 +169,15 @@ export default function GiftsView() {
 
       {/* 真实空状态或礼物卡片 */}
       {filteredGifts.length === 0 ? (
-        <div className="relative z-10 p-14 sm:p-20 text-center rounded-[2rem] glass-crystal border border-pink-200/25 text-slate-300 space-y-5 max-w-2xl mx-auto">
-          <div className="w-16 h-16 rounded-3xl bg-pink-400/15 border border-pink-300/30 flex items-center justify-center mx-auto text-pink-300 shadow-[0_0_25px_rgba(244,114,182,0.2)]">
+        <div className="relative z-10 p-14 sm:p-20 text-center rounded-[2rem] fairy-card text-[var(--theme-text-secondary)] space-y-5 max-w-2xl mx-auto">
+          <div className="w-16 h-16 rounded-3xl bg-[#F6A9CD]/25 border border-[#F6A9CD]/50 flex items-center justify-center mx-auto text-[#D85F91] dark:text-[#FFD1DC] shadow-[0_0_25px_rgba(246,169,205,0.28)]">
             <Gift className="w-8 h-8" />
           </div>
           <div className="space-y-2">
-            <h3 className="font-serif-sc text-xl text-white font-light tracking-wider">
+            <h3 className="font-serif-sc text-xl text-[var(--theme-text-primary)] font-light tracking-wider">
               展馆尚无礼物记录
             </h3>
-            <p className="text-xs text-slate-300/80 font-light max-w-sm mx-auto leading-relaxed">
+            <p className="text-xs text-[var(--theme-text-secondary)] font-light max-w-sm mx-auto leading-relaxed">
               无论是生日惊喜、节日花束，还是写在便签上的真情手写信，都可以在这里为它开辟专属展位。
             </p>
           </div>

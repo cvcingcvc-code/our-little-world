@@ -69,19 +69,19 @@ export default function AchievementsView() {
       />
 
       {/* 总体解锁进度卡片 */}
-      <div className="relative z-10 p-5 rounded-3xl glass-crystal border border-pink-200/25 space-y-2.5">
+      <div className="relative z-10 p-5 rounded-3xl fairy-card space-y-2.5">
         <div className="flex items-center justify-between text-xs font-serif-sc">
-          <span className="text-pink-100 font-medium flex items-center gap-1.5">
-            <Sparkles className="w-4 h-4 text-amber-300" />
+          <span className="text-[var(--theme-text-primary)] font-medium flex items-center gap-1.5">
+            <Sparkles className="w-4 h-4 text-[#F47FA9] dark:text-[#FFE3B5]" />
             <span>勋章点亮率</span>
           </span>
-          <span className="text-pink-300 font-semibold">
+          <span className="text-[#D85F91] dark:text-[#FFD1DC] font-semibold">
             已点亮 {unlockedCount} / {achievements.length} 枚 ({unlockRate}%)
           </span>
         </div>
-        <div className="w-full h-2.5 rounded-full bg-slate-800/80 overflow-hidden border border-white/10">
+        <div className="w-full h-2.5 rounded-full bg-[var(--theme-surface-glass)] overflow-hidden border border-[#F6A9CD]/40">
           <div
-            className="h-full bg-gradient-to-r from-amber-300 via-pink-400 to-purple-400 transition-all duration-700 rounded-full"
+            className="h-full bg-gradient-to-r from-[#FFE3B5] via-[#F6A9CD] to-[#A995D0] transition-all duration-700 rounded-full"
             style={{ width: `${unlockRate}%` }}
           />
         </div>

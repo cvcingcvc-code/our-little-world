@@ -8,6 +8,7 @@ import { WishItem } from "@/types";
 import { getWishItems, saveWishItem, updateWishStatus, deleteWishItem } from "@/lib/storage";
 import { processImageFile } from "@/lib/upload";
 import ExhibitionCover from "@/components/common/ExhibitionCover";
+import RomanticModal from "@/components/common/RomanticModal";
 import {
   ListTodo,
   Plus,
@@ -174,19 +175,19 @@ export default function WishesView() {
       />
 
       {/* 进度条卡片 */}
-      <div className="relative z-10 p-5 rounded-3xl glass-crystal border border-pink-200/25 space-y-2.5">
+      <div className="relative z-10 p-5 rounded-3xl fairy-card space-y-2.5">
         <div className="flex items-center justify-between text-xs font-serif-sc">
-          <span className="text-pink-100 font-medium flex items-center gap-1.5">
-            <Trophy className="w-4 h-4 text-amber-300" />
+          <span className="text-[var(--theme-text-primary)] font-medium flex items-center gap-1.5">
+            <Trophy className="w-4 h-4 text-[#F47FA9] dark:text-[#FFE3B5]" />
             <span>共同奔赴进度</span>
           </span>
-          <span className="text-pink-300 font-semibold">
+          <span className="text-[#D85F91] dark:text-[#FFD1DC] font-semibold">
             已点亮 {completedCount} / {wishes.length} ({progressPercent}%)
           </span>
         </div>
-        <div className="w-full h-2.5 rounded-full bg-slate-800/80 overflow-hidden border border-white/10">
+        <div className="w-full h-2.5 rounded-full bg-[var(--theme-surface-glass)] overflow-hidden border border-[#F6A9CD]/40">
           <div
-            className="h-full bg-gradient-to-r from-pink-400 via-rose-400 to-purple-400 transition-all duration-700 rounded-full"
+            className="h-full bg-gradient-to-r from-[#F6A9CD] via-[#F47FA9] to-[#A995D0] transition-all duration-700 rounded-full"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
@@ -194,7 +195,7 @@ export default function WishesView() {
 
       {/* 状态与分类筛选 */}
       <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {[
             { id: "all", label: `全部 (${wishes.length})` },
             { id: "completed", label: `已点亮 (${completedCount})` },
@@ -204,10 +205,8 @@ export default function WishesView() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition cursor-pointer ${
-                activeTab === tab.id
-                  ? "bg-slate-800 dark:bg-slate-100 text-white dark:text-slate-900 shadow-xs"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200"
+              className={`px-4 py-1.5 rounded-full text-xs font-serif-sc cursor-pointer ${
+                activeTab === tab.id ? "btn-shoujo-pill-active" : "btn-shoujo-pill-idle"
               }`}
             >
               {tab.label}
@@ -226,10 +225,8 @@ export default function WishesView() {
             <button
               key={c.id}
               onClick={() => setActiveCategory(c.id)}
-              className={`px-3 py-1 rounded-lg text-xs transition cursor-pointer ${
-                activeCategory === c.id
-                  ? "bg-sky-100 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300 font-medium"
-                  : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+              className={`px-3.5 py-1 rounded-full text-xs font-serif-sc cursor-pointer ${
+                activeCategory === c.id ? "btn-shoujo-pill-active" : "btn-shoujo-pill-idle"
               }`}
             >
               {c.label}
@@ -239,7 +236,7 @@ export default function WishesView() {
       </div>
 
       {/* 愿望卡片网格 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {filteredWishes.map((wish, index) => {
           const isDone = wish.status === "completed";
           const isInProgress = wish.status === "in_progress";
@@ -247,35 +244,30 @@ export default function WishesView() {
           return (
             <div
               key={wish.id}
-              className={`p-5 rounded-3xl border transition duration-300 flex flex-col justify-between space-y-4 ${
-                isDone
-                  ? "bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-300/50 dark:border-emerald-800/50 shadow-sm"
-                  : isInProgress
-                  ? "bg-indigo-50/40 dark:bg-indigo-950/20 border-indigo-300/50 dark:border-indigo-800/50 shadow-sm"
-                  : "bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-md"
+              className={`p-5 rounded-3xl fairy-card flex flex-col justify-between space-y-4 ${
+                isDone ? "border-emerald-300/60" : isInProgress ? "border-[#A995D0]/70" : ""
               }`}
             >
               <div className="space-y-3">
                 {/* 顶部标签与序号 */}
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono text-slate-400">#{index + 1}</span>
+                  <span className="text-xs font-cinzel text-[var(--theme-text-muted)]">#{index + 1}</span>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                    <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-[#FFD1DC]/40 dark:bg-[#F6A9CD]/20 text-[var(--theme-text-secondary)]">
                       {getCategoryLabel(wish.category)}
                     </span>
-                    {/* 状态徽章 */}
                     {isDone && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 font-medium flex items-center gap-1">
+                      <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-400/20 text-emerald-700 dark:text-emerald-200 font-medium flex items-center gap-1">
                         <CheckCircle2 className="w-3 h-3" /> 已点亮
                       </span>
                     )}
                     {isInProgress && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 font-medium flex items-center gap-1">
+                      <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-[#A995D0]/30 text-[var(--theme-text-primary)] font-medium flex items-center gap-1">
                         <Clock className="w-3 h-3" /> 进行中
                       </span>
                     )}
                     {wish.status === "todo" && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 font-medium">
+                      <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-[var(--theme-surface-glass)] text-[var(--theme-text-muted)] font-medium">
                         待奔赴
                       </span>
                     )}
@@ -283,13 +275,7 @@ export default function WishesView() {
                 </div>
 
                 {/* 愿望标题 */}
-                <h3
-                  className={`font-serif text-base font-medium ${
-                    isDone
-                      ? "text-slate-700 dark:text-slate-200"
-                      : "text-slate-900 dark:text-slate-100"
-                  }`}
-                >
+                <h3 className="font-serif-sc text-base font-medium text-[var(--theme-text-primary)]">
                   {wish.title}
                 </h3>
 
@@ -328,16 +314,16 @@ export default function WishesView() {
                   {!isDone && (
                     <button
                       onClick={() => handleStatusChange(wish, "completed")}
-                      className="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-medium flex items-center gap-1 shadow-xs transition cursor-pointer"
+                      className="btn-shoujo-primary px-3.5 py-1.5 rounded-full font-serif-sc font-medium flex items-center gap-1 cursor-pointer"
                     >
-                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <Sparkles className="w-3.5 h-3.5" />
                       <span>打卡点亮</span>
                     </button>
                   )}
                   {wish.status === "todo" && (
                     <button
                       onClick={() => handleStatusChange(wish, "in_progress")}
-                      className="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition cursor-pointer"
+                      className="btn-shoujo-glass px-3 py-1.5 rounded-full text-xs font-serif-sc cursor-pointer"
                     >
                       设为进行中
                     </button>
@@ -345,7 +331,7 @@ export default function WishesView() {
                   {isInProgress && (
                     <button
                       onClick={() => handleStatusChange(wish, "todo")}
-                      className="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition cursor-pointer"
+                      className="btn-shoujo-glass px-3 py-1.5 rounded-full text-xs font-serif-sc cursor-pointer"
                     >
                       重置为待完成
                     </button>
@@ -366,160 +352,133 @@ export default function WishesView() {
         })}
       </div>
 
-      {/* 打卡完成纪念模态框 */}
-      {completeModalItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-          <div className="relative w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5">
-            <button
-              onClick={() => setCompleteModalItem(null)}
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-full cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="text-center space-y-1">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-300 font-medium">
-                <Sparkles className="w-3.5 h-3.5" /> 恭喜完成心愿！
-              </span>
-              <h3 className="text-lg font-serif font-medium text-slate-800 dark:text-slate-100">
-                {completeModalItem.title}
-              </h3>
-              <p className="text-xs text-slate-500">上传一张打卡合影，写下一句心动回忆吧</p>
-            </div>
-
-            <form onSubmit={handleConfirmCompletion} className="space-y-4">
-              <div
-                onClick={() => fileInputRef.current?.click()}
-                className="relative w-full aspect-16/9 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-emerald-400 flex flex-col items-center justify-center overflow-hidden cursor-pointer bg-slate-50 dark:bg-slate-800/50 transition"
-              >
-                {completionPhoto ? (
-                  <Image src={completionPhoto} alt="打卡合影" fill className="object-cover" />
-                ) : (
-                  <div className="text-center p-4 space-y-1">
-                    <Camera className="w-7 h-7 mx-auto text-slate-400" />
-                    <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">
-                      {isProcessing ? "压缩中..." : "上传打卡合影凭证（可选）"}
-                    </p>
-                  </div>
-                )}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
+      {/* 打卡完成纪念模态框 (统一 RomanticModal) */}
+      <RomanticModal
+        isOpen={Boolean(completeModalItem)}
+        onClose={() => setCompleteModalItem(null)}
+        title={completeModalItem ? `点亮心愿 · ${completeModalItem.title}` : "点亮心愿"}
+        subtitle="上传一张打卡合影，写下一句心动回忆吧 ♡"
+        badgeText="✨ WISH COMPLETED"
+        maxWidth="max-w-md"
+      >
+        <form onSubmit={handleConfirmCompletion} className="space-y-4">
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            className="relative w-full aspect-16/9 rounded-2xl border-2 border-dashed border-[#F6A9CD]/60 hover:border-[#F47FA9] flex flex-col items-center justify-center overflow-hidden cursor-pointer bg-[var(--theme-surface-glass)] transition"
+          >
+            {completionPhoto ? (
+              <Image src={completionPhoto} alt="打卡合影" fill className="object-cover" />
+            ) : (
+              <div className="text-center p-4 space-y-1">
+                <Camera className="w-7 h-7 mx-auto text-[#F47FA9]" />
+                <p className="text-xs text-[var(--theme-text-primary)] font-medium">
+                  {isProcessing ? "压缩中..." : "上传打卡合影凭证（可选）"}
+                </p>
               </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                  完成感言 / 回忆小记
-                </label>
-                <textarea
-                  rows={3}
-                  value={completionReflection}
-                  onChange={(e) => setCompletionReflection(e.target.value)}
-                  placeholder="如：我们真的做到了！在飘雪的路灯下，那一刻好幸福..."
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-emerald-400"
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={isProcessing}
-                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-sky-500 text-xs font-medium text-white shadow-md hover:from-emerald-600 hover:to-sky-600 transition cursor-pointer"
-              >
-                确定点亮愿望 ✨
-              </button>
-            </form>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+            />
           </div>
-        </div>
-      )}
 
-      {/* 新增小事模态框 */}
-      {addModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-          <div className="relative w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5">
+          <div className="space-y-1">
+            <label className="text-xs font-serif-sc font-medium text-[var(--theme-text-secondary)]">
+              完成感言 / 回忆小记
+            </label>
+            <textarea
+              rows={3}
+              value={completionReflection}
+              onChange={(e) => setCompletionReflection(e.target.value)}
+              placeholder="如：我们真的做到了！在飘雪的路灯下，那一刻好幸福..."
+              className="romantic-input text-xs resize-none"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={isProcessing}
+            className="w-full btn-shoujo-primary py-2.5 rounded-full text-xs font-serif-sc font-medium cursor-pointer"
+          >
+            确定点亮愿望 ✨
+          </button>
+        </form>
+      </RomanticModal>
+
+      {/* 新增小事模态框 (统一 RomanticModal) */}
+      <RomanticModal
+        isOpen={addModalOpen}
+        onClose={() => setAddModalOpen(false)}
+        title="写下一件想一起做的事"
+        subtitle="添加新的愿望或约会计划，以后一件一件慢慢打卡。"
+        badgeText="♡ NEW WISH"
+        maxWidth="max-w-md"
+      >
+        <form onSubmit={handleAddWish} className="space-y-4">
+          <div className="space-y-1">
+            <label className="text-xs font-serif-sc font-medium text-[var(--theme-text-secondary)]">
+              愿望小事 *
+            </label>
+            <input
+              type="text"
+              required
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="如：一起在冬夜漫步看初雪"
+              className="romantic-input text-xs"
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-xs font-serif-sc font-medium text-[var(--theme-text-secondary)]">
+              分类
+            </label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value as WishItem["category"])}
+              className="romantic-input text-xs"
+            >
+              <option value="romantic">浪漫心动</option>
+              <option value="daily">日常生活</option>
+              <option value="travel">远方旅行</option>
+              <option value="food">人间美食</option>
+              <option value="challenge">双人挑战</option>
+              <option value="milestone">人生里程碑</option>
+            </select>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-xs font-serif-sc font-medium text-[var(--theme-text-secondary)]">
+              目标期待日期（可选）
+            </label>
+            <input
+              type="date"
+              value={targetDate}
+              onChange={(e) => setTargetDate(e.target.value)}
+              className="romantic-input font-cinzel text-xs"
+            />
+          </div>
+
+          <div className="pt-2 flex justify-end gap-2.5">
             <button
+              type="button"
               onClick={() => setAddModalOpen(false)}
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-full cursor-pointer"
+              className="btn-shoujo-glass px-5 py-2 rounded-full text-xs font-serif-sc cursor-pointer"
             >
-              <X className="w-5 h-5" />
+              取消
             </button>
-
-            <div className="space-y-1">
-              <h3 className="text-lg font-medium text-slate-800 dark:text-slate-100">
-                写下一件想一起做的事
-              </h3>
-              <p className="text-xs text-slate-500">
-                添加新的愿望或约会计划，以后一件一件慢慢打卡。
-              </p>
-            </div>
-
-            <form onSubmit={handleAddWish} className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                  愿望小事 *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="如：一起在冬夜漫步看初雪"
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-sky-400"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                  分类
-                </label>
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value as WishItem["category"])}
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-sky-400"
-                >
-                  <option value="romantic">浪漫心动</option>
-                  <option value="daily">日常生活</option>
-                  <option value="travel">远方旅行</option>
-                  <option value="food">人间美食</option>
-                  <option value="challenge">双人挑战</option>
-                  <option value="milestone">人生里程碑</option>
-                </select>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                  目标期待日期（可选）
-                </label>
-                <input
-                  type="date"
-                  value={targetDate}
-                  onChange={(e) => setTargetDate(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-sky-400"
-                />
-              </div>
-
-              <div className="pt-2 flex justify-end gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => setAddModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
-                >
-                  取消
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 text-xs font-medium text-white shadow-md transition cursor-pointer"
-                >
-                  加入愿望清单
-                </button>
-              </div>
-            </form>
+            <button
+              type="submit"
+              className="btn-shoujo-primary px-6 py-2 rounded-full text-xs font-serif-sc font-medium cursor-pointer"
+            >
+              加入愿望清单 ♡
+            </button>
           </div>
-        </div>
-      )}
+        </form>
+      </RomanticModal>
     </div>
   );
 }

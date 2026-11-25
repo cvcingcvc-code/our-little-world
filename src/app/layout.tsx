@@ -13,8 +13,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" className="h-full antialiased" suppressHydrationWarning>
-      <body className="min-h-full flex flex-col font-sans transition-colors duration-500 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 selection:bg-rose-200 selection:text-rose-900">
+    <html lang="zh-CN" className="min-h-dvh antialiased" suppressHydrationWarning>
+      <body className="min-h-dvh flex flex-col font-sans transition-colors duration-500 text-[var(--theme-text-primary)] selection:bg-[#FFD1DC] selection:text-[#292445]">
         <AppProvider>{children}</AppProvider>
       </body>
     </html>

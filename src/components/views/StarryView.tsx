@@ -6,6 +6,7 @@ import { useApp } from "@/context/AppContext";
 import { StarMemory } from "@/types";
 import { getStarMemories, saveStarMemory, deleteStarMemory } from "@/lib/storage";
 import ExhibitionCover from "@/components/common/ExhibitionCover";
+import RomanticModal, { RomanticErrorTip, RomanticSuccessToast } from "@/components/common/RomanticModal";
 import { withBasePath } from "@/lib/assets";
 import {
   Sparkles,
@@ -31,8 +32,10 @@ export default function StarryView() {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [story, setStory] = useState("");
-  const [color, setColor] = useState("#f43f5e");
+  const [color, setColor] = useState("#F6A9CD");
   const [type, setType] = useState<StarMemory["type"]>("memory");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -182,7 +185,11 @@ export default function StarryView() {
 
   const handleAddStar = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim()) return;
+    if (!title.trim()) {
+      setErrorMsg("请先为这颗小星星起一个心动标题吧 ♡");
+      return;
+    }
+    setErrorMsg("");
 
     // 随机分配在视野中心区域 (20% - 80%)
     const newX = Math.round(Math.random() * 60 + 20);
@@ -203,6 +210,8 @@ export default function StarryView() {
     setTitle("");
     setStory("");
     setAddModalOpen(false);
+    setSuccessMsg("已点亮一颗专属星辰，闪耀在我们的星海里 ✨");
+    setTimeout(() => setSuccessMsg(""), 3200);
     triggerRefresh();
   };
 
@@ -309,94 +318,105 @@ export default function StarryView() {
         )}
       </div>
 
-      {/* 升起新星模态框 */}
-      {addModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-          <div className="relative w-full max-w-md bg-slate-900 border border-slate-700 rounded-3xl p-6 sm:p-8 shadow-2xl text-white space-y-5">
-            <button
-              onClick={() => setAddModalOpen(false)}
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-full cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
+      {/* 保存成功星光提示 */}
+      <RomanticSuccessToast message={successMsg} />
 
-            <div className="space-y-1">
-              <h3 className="text-lg font-medium">将回忆化为星辰</h3>
-              <p className="text-xs text-slate-400">
-                为两人的星空宇宙点亮一颗永久闪烁的星。
-              </p>
+      {/* 升起新星模态框 (少女感统一 RomanticModal) */}
+      <RomanticModal
+        isOpen={addModalOpen}
+        onClose={() => {
+          setErrorMsg("");
+          setAddModalOpen(false);
+        }}
+        title="将回忆化为星辰"
+        subtitle="为两人的星空宇宙点亮一颗永久闪烁的星，收藏这段闪闪发光的故事。"
+        badgeText="✨ STARRY MEMORY"
+        maxWidth="max-w-md"
+      >
+        <form onSubmit={handleAddStar} noValidate className="space-y-4">
+          <RomanticErrorTip message={errorMsg} />
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-serif-sc font-medium text-[var(--theme-text-secondary)]">
+              星辰名称 / 心动标题 *
+            </label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                if (errorMsg) setErrorMsg("");
+              }}
+              placeholder="如：初雪夜里的心动回响"
+              className="romantic-input"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label className="text-xs font-serif-sc font-medium text-[var(--theme-text-secondary)]">
+                记录日期
+              </label>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="romantic-input font-cinzel text-xs"
+              />
             </div>
 
-            <form onSubmit={handleAddStar} className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-300">星辰名称 / 心动标题 *</label>
-                <input
-                  type="text"
-                  required
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="如：初见的心动回响"
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-400"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="text-xs font-medium text-slate-300">记录日期</label>
-                  <input
-                    type="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-400"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-medium text-slate-300">星辰光芒色彩</label>
-                  <select
-                    value={color}
-                    onChange={(e) => setColor(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-400"
-                  >
-                    <option value="#f43f5e">初雪粉红</option>
-                    <option value="#38bdf8">冬晴蔚蓝</option>
-                    <option value="#a855f7">梦幻紫罗兰</option>
-                    <option value="#f59e0b">暖阳琥珀</option>
-                    <option value="#10b981">极光之翠</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-300">回忆故事</label>
-                <textarea
-                  rows={3}
-                  value={story}
-                  onChange={(e) => setStory(e.target.value)}
-                  placeholder="写下这颗星星封存的微小秘密..."
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-400"
-                />
-              </div>
-
-              <div className="pt-2 flex justify-end gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => setAddModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs text-slate-400 hover:text-white transition cursor-pointer"
-                >
-                  取消
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-rose-500 text-xs font-medium text-white shadow-md transition cursor-pointer"
-                >
-                  点亮星辰 ✨
-                </button>
-              </div>
-            </form>
+            <div className="space-y-1.5">
+              <label className="text-xs font-serif-sc font-medium text-[var(--theme-text-secondary)]">
+                星辰光芒色彩
+              </label>
+              <select
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+                className="romantic-input text-xs"
+              >
+                <option value="#F6A9CD">樱花粉柔光</option>
+                <option value="#FFE3B5">香槟暖星金</option>
+                <option value="#A995D0">薰衣草梦幻紫</option>
+                <option value="#FFD1DC">奶油蜜桃粉</option>
+                <option value="#7DD3FC">冬晴冰晶蓝</option>
+              </select>
+            </div>
           </div>
-        </div>
-      )}
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-serif-sc font-medium text-[var(--theme-text-secondary)]">
+              回忆故事
+            </label>
+            <textarea
+              rows={3}
+              value={story}
+              onChange={(e) => setStory(e.target.value)}
+              placeholder="写下这颗星星封存的微小秘密与温暖瞬间..."
+              className="romantic-input resize-none"
+            />
+          </div>
+
+          <div className="pt-2 flex justify-end gap-2.5">
+            <button
+              type="button"
+              onClick={() => {
+                setErrorMsg("");
+                setAddModalOpen(false);
+              }}
+              className="btn-shoujo-glass px-5 py-2.5 rounded-full text-xs font-serif-sc cursor-pointer"
+            >
+              先等等
+            </button>
+            <button
+              type="submit"
+              className="btn-shoujo-primary px-6 py-2.5 rounded-full text-xs font-serif-sc font-medium cursor-pointer flex items-center gap-1.5"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-white" />
+              <span>点亮星辰 ✨</span>
+            </button>
+          </div>
+        </form>
+      </RomanticModal>
     </div>
   );
 }

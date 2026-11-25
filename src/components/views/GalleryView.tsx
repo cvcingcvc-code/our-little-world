@@ -7,6 +7,7 @@ import { PhotoItem } from "@/types";
 import { getPhotos, savePhoto, deletePhoto, togglePhotoFavorite } from "@/lib/storage";
 import { processImageFile } from "@/lib/upload";
 import ExhibitionCover from "@/components/common/ExhibitionCover";
+import RomanticModal from "@/components/common/RomanticModal";
 import {
   Camera,
   Upload,
@@ -201,15 +202,15 @@ export default function GalleryView() {
 
       {/* 真实空状态展示 (Empty State) */}
       {filteredPhotos.length === 0 ? (
-        <div className="relative z-10 p-14 sm:p-20 text-center rounded-[2rem] glass-crystal border border-pink-200/25 text-slate-300 space-y-5 max-w-2xl mx-auto">
-          <div className="w-16 h-16 rounded-3xl bg-pink-400/15 border border-pink-300/30 flex items-center justify-center mx-auto text-pink-300 shadow-[0_0_25px_rgba(244,114,182,0.2)]">
+        <div className="relative z-10 p-14 sm:p-20 text-center rounded-[2rem] fairy-card text-[var(--theme-text-secondary)] space-y-5 max-w-2xl mx-auto">
+          <div className="w-16 h-16 rounded-3xl bg-[#F6A9CD]/20 border border-[#F6A9CD]/45 flex items-center justify-center mx-auto text-[#F47FA9] dark:text-[#FFD1DC] shadow-[0_0_25px_rgba(246,169,205,0.28)]">
             <Camera className="w-8 h-8" />
           </div>
           <div className="space-y-2">
-            <h3 className="font-serif-sc text-xl text-white font-light tracking-wider">
+            <h3 className="font-serif-sc text-xl text-[var(--theme-text-primary)] font-light tracking-wider">
               相册馆尚无回忆照片
             </h3>
-            <p className="text-xs text-slate-500 font-light max-w-sm mx-auto leading-relaxed">
+            <p className="text-xs text-[var(--theme-text-secondary)] font-light max-w-sm mx-auto leading-relaxed">
               这里绝不展示任何虚构的恋爱生活。快来点击下方按钮，定格属于你们真实的第一张合影吧。
             </p>
           </div>
@@ -293,144 +294,131 @@ export default function GalleryView() {
         </div>
       )}
 
-      {/* 上传照片模态框 */}
-      {uploadModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-          <div className="relative w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto space-y-5">
-            <button
-              onClick={() => setUploadModalOpen(false)}
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-full cursor-pointer border-none"
-            >
-              <X className="w-5 h-5" />
-            </button>
+      {/* 上传照片模态框 (统一 RomanticModal) */}
+      <RomanticModal
+        isOpen={uploadModalOpen}
+        onClose={() => setUploadModalOpen(false)}
+        title="定格一张真实回忆"
+        subtitle="支持手机相册上传与拍照，图片在客户端自动压制并安全保存在本设备中。"
+        badgeText="🎀 POLAROID UPLOAD"
+        maxWidth="max-w-lg"
+      >
+        <form onSubmit={handleSavePhoto} className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            className="relative w-full aspect-16/9 rounded-2xl border-2 border-dashed border-[#F6A9CD]/60 hover:border-[#F47FA9] flex flex-col items-center justify-center overflow-hidden cursor-pointer bg-[var(--theme-surface-glass)] transition"
+          >
+            {previewUrl ? (
+              <Image src={previewUrl} alt="预览照片" fill className="object-cover" />
+            ) : (
+              <div className="text-center p-4 space-y-2">
+                <Camera className="w-8 h-8 mx-auto text-[#F47FA9]" />
+                <p className="text-xs text-[var(--theme-text-primary)] font-medium">
+                  {isProcessing ? "正在温柔压缩画质..." : "点击选择照片 / 手机拍照上传"}
+                </p>
+                <p className="text-[10px] text-[var(--theme-text-muted)]">客户端安全压缩，不上载至 GitHub 仓库</p>
+              </div>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+          </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
-              <h3 className="text-lg font-serif font-medium text-slate-800 dark:text-slate-100">
-                定格一张真实回忆
-              </h3>
-              <p className="text-xs text-slate-500 font-light">
-                支持手机相册上传与拍照，图片在客户端自动压制并安全保存在本设备中。
-              </p>
+              <label className="text-xs font-serif-sc font-medium text-[var(--theme-text-secondary)]">
+                回忆标题 *
+              </label>
+              <input
+                type="text"
+                required
+                value={formTitle}
+                onChange={(e) => setFormTitle(e.target.value)}
+                placeholder="如：冬日初雪漫步"
+                className="romantic-input text-xs"
+              />
             </div>
 
-            <form onSubmit={handleSavePhoto} className="space-y-4">
-              <div
-                onClick={() => fileInputRef.current?.click()}
-                className="relative w-full aspect-16/9 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-rose-400 flex flex-col items-center justify-center overflow-hidden cursor-pointer bg-slate-50 dark:bg-slate-800/50 transition"
-              >
-                {previewUrl ? (
-                  <Image src={previewUrl} alt="预览照片" fill className="object-cover" />
-                ) : (
-                  <div className="text-center p-4 space-y-2">
-                    <Camera className="w-8 h-8 mx-auto text-slate-400" />
-                    <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">
-                      {isProcessing ? "正在压缩画质..." : "点击选择照片 / 手机拍照上传"}
-                    </p>
-                    <p className="text-[10px] text-slate-400">客户端安全压缩，不上载至 GitHub 仓库</p>
-                  </div>
-                )}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                    回忆标题 *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formTitle}
-                    onChange={(e) => setFormTitle(e.target.value)}
-                    placeholder="如：冬日初雪漫步"
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-rose-400"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                    日期
-                  </label>
-                  <input
-                    type="date"
-                    value={formDate}
-                    onChange={(e) => setFormDate(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-rose-400"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                    相册分类
-                  </label>
-                  <select
-                    value={formCategory}
-                    onChange={(e) => setFormCategory(e.target.value as PhotoItem["category"])}
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-rose-400"
-                  >
-                    <option value="dating">约会记录</option>
-                    <option value="snapshot">可爱抓拍</option>
-                    <option value="daily">日常温存</option>
-                    <option value="travel">旅行足迹</option>
-                    <option value="funny">搞怪瞬间</option>
-                  </select>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                    拍摄地点
-                  </label>
-                  <input
-                    type="text"
-                    value={formLocation}
-                    onChange={(e) => setFormLocation(e.target.value)}
-                    placeholder="如：雪花飘落的林荫道"
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-rose-400"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                  描述与当刻心情
-                </label>
-                <textarea
-                  rows={2}
-                  value={formDesc}
-                  onChange={(e) => setFormDesc(e.target.value)}
-                  placeholder="写下一两句当下的心情或细节..."
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-rose-400"
-                />
-              </div>
-
-              <div className="pt-3 flex items-center justify-end gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => setUploadModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer border-none"
-                >
-                  取消
-                </button>
-                <button
-                  type="submit"
-                  disabled={isProcessing}
-                  className="px-6 py-2 rounded-xl bg-gradient-to-r from-rose-500 to-indigo-600 text-xs font-medium text-white shadow-md hover:from-rose-600 hover:to-indigo-700 transition cursor-pointer disabled:opacity-50 border-none"
-                >
-                  确认珍藏
-                </button>
-              </div>
-            </form>
+            <div className="space-y-1">
+              <label className="text-xs font-serif-sc font-medium text-[var(--theme-text-secondary)]">
+                日期
+              </label>
+              <input
+                type="date"
+                value={formDate}
+                onChange={(e) => setFormDate(e.target.value)}
+                className="romantic-input font-cinzel text-xs"
+              />
+            </div>
           </div>
-        </div>
-      )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <label className="text-xs font-serif-sc font-medium text-[var(--theme-text-secondary)]">
+                相册分类
+              </label>
+              <select
+                value={formCategory}
+                onChange={(e) => setFormCategory(e.target.value as PhotoItem["category"])}
+                className="romantic-input text-xs"
+              >
+                <option value="dating">约会记录</option>
+                <option value="snapshot">可爱抓拍</option>
+                <option value="daily">日常温存</option>
+                <option value="travel">旅行足迹</option>
+                <option value="funny">搞怪瞬间</option>
+              </select>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-serif-sc font-medium text-[var(--theme-text-secondary)]">
+                拍摄地点
+              </label>
+              <input
+                type="text"
+                value={formLocation}
+                onChange={(e) => setFormLocation(e.target.value)}
+                placeholder="如：雪花飘落的林荫道"
+                className="romantic-input text-xs"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-xs font-serif-sc font-medium text-[var(--theme-text-secondary)]">
+              描述与当刻心情
+            </label>
+            <textarea
+              rows={2}
+              value={formDesc}
+              onChange={(e) => setFormDesc(e.target.value)}
+              placeholder="写下一两句当下的心情或细节..."
+              className="romantic-input text-xs resize-none"
+            />
+          </div>
+
+          <div className="pt-2 flex items-center justify-end gap-2.5">
+            <button
+              type="button"
+              onClick={() => setUploadModalOpen(false)}
+              className="btn-shoujo-glass px-5 py-2 rounded-full text-xs font-serif-sc cursor-pointer"
+            >
+              取消
+            </button>
+            <button
+              type="submit"
+              disabled={isProcessing}
+              className="btn-shoujo-primary px-6 py-2 rounded-full text-xs font-serif-sc font-medium cursor-pointer disabled:opacity-50"
+            >
+              确认珍藏 ♡
+            </button>
+          </div>
+        </form>
+      </RomanticModal>
 
       {/* 全屏灯箱预览 */}
       {lightboxIndex !== null && filteredPhotos[lightboxIndex] && (

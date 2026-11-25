@@ -121,7 +121,7 @@ export default function DiaryView() {
 
       {/* 日记列表 */}
       {diaries.length === 0 ? (
-        <div className="relative z-10 p-12 text-center rounded-[2rem] glass-crystal border border-pink-200/25 text-slate-300 space-y-3">
+        <div className="relative z-10 p-12 text-center rounded-[2rem] fairy-card text-[var(--theme-text-secondary)] space-y-3">
           <BookHeart className="w-10 h-10 mx-auto text-slate-300 dark:text-slate-600" />
           <p className="text-sm font-light">还没有写下日记呢，赶紧记录第一份心情吧</p>
         </div>

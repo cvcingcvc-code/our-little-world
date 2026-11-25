@@ -152,15 +152,15 @@ export default function FoodView() {
 
       {/* 真实空状态或美食卡片列表 */}
       {currentList.length === 0 ? (
-        <div className="relative z-10 p-14 sm:p-20 text-center rounded-[2rem] glass-crystal border border-pink-200/25 text-slate-300 space-y-5 max-w-2xl mx-auto">
-          <div className="w-16 h-16 rounded-3xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/50 flex items-center justify-center mx-auto text-amber-500">
+        <div className="relative z-10 p-14 sm:p-20 text-center rounded-[2rem] fairy-card text-[var(--theme-text-secondary)] space-y-5 max-w-2xl mx-auto">
+          <div className="w-16 h-16 rounded-3xl bg-[#FFD1DC]/35 border border-[#F6A9CD]/50 flex items-center justify-center mx-auto text-[#D85F91] dark:text-[#FFE3B5]">
             <UtensilsCrossed className="w-8 h-8" />
           </div>
-          <div className="space-y-1">
-            <h3 className="font-serif text-lg text-slate-700 dark:text-slate-200 font-medium">
+          <div className="space-y-1.5">
+            <h3 className="font-serif-sc text-xl text-[var(--theme-text-primary)] font-light">
               {tab === "history" ? "还没有打卡过美食" : "想吃心愿清单还是空的"}
             </h3>
-            <p className="text-xs text-slate-500 font-light max-w-sm mx-auto leading-relaxed">
+            <p className="text-xs text-[var(--theme-text-secondary)] font-light max-w-sm mx-auto leading-relaxed">
               {tab === "history"
                 ? "每一次共同品尝的美味都值得被铭记。快来记录你们第一次一起吃的那家餐厅吧。"
                 : "写下一家你们一直想去、等下雪天或周末一起去品尝的暖冬小馆吧。"}

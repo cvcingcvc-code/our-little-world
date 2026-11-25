@@ -1,9 +1,40 @@
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 
+/* Tailwind v4 类控暗夜模式：确保 html.dark 精准触发 dark: 变体 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ================= 全站少女童话 Design Tokens ================= */
 :root {
-  --background: #070b14;
-  --foreground: #f1f5f9;
+  /* 核心品牌色板 */
+  --color-star-deep: #292445;     /* 深暮星紫 */
+  --color-star-dream: #65548D;    /* 梦幻星紫 */
+  --color-lavender: #A995D0;      /* 薰衣草紫 */
+  --color-sakura: #F6A9CD;        /* 樱花粉 */
+  --color-peach: #FFD1DC;         /* 蜜桃粉 */
+  --color-cream: #FFF5EF;         /* 奶油白 */
+  --color-champagne: #FFE3B5;     /* 香槟金 */
+  --color-crystal: #FFF0F8;       /* 水晶高光 */
+
+  /* 浅色童话日间主题（奶油粉 × 薰衣草淡紫） */
+  --theme-text-primary: #3A2C54;
+  --theme-text-secondary: #68568A;
+  --theme-text-muted: #8C7AA8;
+  --theme-surface-glass: rgba(255, 245, 248, 0.78);
+  --theme-surface-card: rgba(255, 248, 252, 0.88);
+  --theme-border-crystal: rgba(246, 169, 205, 0.52);
+  --theme-card-shadow: 0 14px 38px -10px rgba(101, 84, 141, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.85);
+}
+
+html.dark {
+  /* 深色梦幻星夜主题（深暮星紫 × 梦幻星紫） */
+  --theme-text-primary: #FFF5EF;
+  --theme-text-secondary: #E6D7F5;
+  --theme-text-muted: #C2B0DC;
+  --theme-surface-glass: rgba(41, 36, 69, 0.75);
+  --theme-surface-card: rgba(54, 44, 90, 0.82);
+  --theme-border-crystal: rgba(246, 169, 205, 0.36);
+  --theme-card-shadow: 0 16px 42px -10px rgba(19, 15, 38, 0.55), inset 0 1px 1px rgba(255, 240, 248, 0.22);
 }
 
 /* 高雅衬线与手账排版字体族 */
@@ -19,19 +50,20 @@
   font-family: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", serif;
 }
 
-.font-playfair {
-  font-family: "Playfair Display", "Noto Serif SC", serif;
-}
-
-/* 优雅平滑滚动与默认底色 */
+/* 全局滚动与视口防白边 */
 html {
   scroll-behavior: smooth;
+  min-height: 100dvh;
+  background-color: #292445;
+  overflow-x: hidden;
 }
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
+  min-height: 100dvh;
+  background: transparent;
+  color: var(--theme-text-primary);
   font-feature-settings: "palt" 1;
+  overflow-x: hidden;
 }
 
 /* 动画定义 */
@@ -46,14 +78,14 @@ body {
   }
 }
 
-@keyframes slowPulse {
-  0%, 100% {
-    opacity: 0.85;
-    transform: scale(1);
+@keyframes modalPopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(10px);
   }
-  50% {
+  to {
     opacity: 1;
-    transform: scale(1.03);
+    transform: scale(1) translateY(0);
   }
 }
 
@@ -80,223 +112,19 @@ body {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-5px);
+    transform: translateY(-6px);
   }
 }
 
-.animate-fadeIn {
-  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.animate-slow-pulse {
-  animation: slowPulse 8s ease-in-out infinite;
-}
-
-.animate-vinyl {
-  animation: vinylSpin 14s linear infinite;
-}
-
-.animate-float {
-  animation: floatGentle 4s ease-in-out infinite;
-}
-
-/* 极致冰晶透光琉璃质感 (Crystal Frost Glass) */
-.glass-crystal {
-  background: rgba(15, 23, 42, 0.55);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  box-shadow: 
-    0 8px 32px 0 rgba(0, 0, 0, 0.37),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.25),
-    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.2);
-}
-
-.glass-crystal-light {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 
-    0 10px 30px -10px rgba(0, 0, 0, 0.08),
-    inset 0 1px 2px 0 rgba(255, 255, 255, 0.9);
-}
-
-/* 拍立得相纸真实质感 (Polaroid Photo Craft) */
-.polaroid-frame {
-  background: #ffffff;
-  padding: 12px 12px 38px 12px;
-  border-radius: 8px;
-  box-shadow:
-    0 16px 36px -10px rgba(0, 0, 0, 0.35),
-    0 4px 12px -2px rgba(0, 0, 0, 0.15),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.04);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.polaroid-frame:hover {
-  transform: translateY(-6px) rotate(0deg) scale(1.02);
-  box-shadow:
-    0 24px 48px -12px rgba(0, 0, 0, 0.45),
-    0 8px 20px -4px rgba(244, 63, 94, 0.2);
-}
-
-/* 和纸胶带仿真 (Washi Tape) */
-.washi-tape {
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%) rotate(-2deg);
-  width: 76px;
-  height: 22px;
-  background: rgba(254, 240, 138, 0.55);
-  backdrop-filter: blur(4px);
-  border-left: 2px dashed rgba(250, 204, 21, 0.6);
-  border-right: 2px dashed rgba(250, 204, 21, 0.6);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  pointer-events: none;
-  z-index: 20;
-}
-
-.washi-tape-pink {
-  background: rgba(254, 205, 211, 0.65);
-  border-left: 2px dashed rgba(244, 63, 94, 0.4);
-  border-right: 2px dashed rgba(244, 63, 94, 0.4);
-}
-
-/* 香槟金与极光微光文字边框 */
-.gold-glow-border {
-  border: 1px solid rgba(253, 224, 71, 0.3);
-  box-shadow: 0 0 15px rgba(253, 224, 71, 0.12);
-}
-
-.shimmer-text {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.9) 0%,
-    rgba(254, 205, 211, 1) 30%,
-    rgba(255, 255, 255, 1) 50%,
-    rgba(186, 230, 253, 1) 70%,
-    rgba(255, 255, 255, 0.9) 100%
-  );
-  background-size: 200% auto;
-  color: transparent;
-  -webkit-background-clip: text;
-  background-clip: text;
-  animation: shimmerWave 6s linear infinite;
-}
-
-/* 竖排日系文艺装饰文字 */
-.writing-mode-vertical {
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-}
-
-/* ================= 少女感果冻微光按钮系统 (Shoujo Jelly & Ribbon Buttons) ================= */
-.btn-shoujo-primary {
-  background: linear-gradient(135deg, #f472b6 0%, #fb7185 52%, #c084fc 100%);
-  color: #ffffff;
-  border: 1px solid rgba(255, 228, 236, 0.55);
-  box-shadow:
-    0 8px 24px -4px rgba(244, 114, 182, 0.45),
-    0 2px 8px -2px rgba(192, 132, 252, 0.35),
-    inset 0 2px 3px rgba(255, 255, 255, 0.55),
-    inset 0 -2px 4px rgba(190, 24, 93, 0.25);
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.btn-shoujo-primary:hover {
-  transform: translateY(-2px) scale(1.03);
-  box-shadow:
-    0 14px 32px -4px rgba(244, 114, 182, 0.62),
-    0 4px 12px -2px rgba(192, 132, 252, 0.45),
-    inset 0 2px 4px rgba(255, 255, 255, 0.7);
-}
-
-.btn-shoujo-primary:active {
-  transform: translateY(0) scale(0.96);
-}
-
-.btn-shoujo-glass {
-  background: rgba(255, 228, 236, 0.16);
-  backdrop-filter: blur(18px) saturate(160%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
-  color: #fff1f2;
-  border: 1px solid rgba(251, 207, 232, 0.45);
-  box-shadow:
-    0 6px 20px -4px rgba(244, 114, 182, 0.2),
-    inset 0 1px 2px rgba(255, 255, 255, 0.35);
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.btn-shoujo-glass:hover {
-  background: rgba(255, 228, 236, 0.28);
-  border-color: rgba(249, 168, 212, 0.75);
-  transform: translateY(-2px) scale(1.02);
-  box-shadow:
-    0 10px 26px -4px rgba(244, 114, 182, 0.35),
-    inset 0 1px 2px rgba(255, 255, 255, 0.5);
-}
-
-.btn-shoujo-glass:active {
-  transform: scale(0.96);
-}
-
-.btn-shoujo-pill-active {
-  background: linear-gradient(135deg, #f472b6 0%, #fb7185 100%);
-  color: #ffffff;
-  border: 1px solid rgba(255, 228, 236, 0.6);
-  box-shadow:
-    0 4px 14px -2px rgba(244, 114, 182, 0.45),
-    inset 0 1.5px 2px rgba(255, 255, 255, 0.5);
-}
-
-.btn-shoujo-pill-idle {
-  background: rgba(255, 241, 242, 0.12);
-  color: #fce7f3;
-  border: 1px solid rgba(251, 207, 232, 0.25);
-  backdrop-filter: blur(10px);
-  transition: all 0.25s ease;
-}
-
-.btn-shoujo-pill-idle:hover {
-  background: rgba(251, 207, 232, 0.22);
-  border-color: rgba(249, 168, 212, 0.5);
-}
-
-/* ================= 少女感深紫磨砂底部导航与微型粒子动效 ================= */
-.shoujo-bottom-nav {
-  background: rgba(23, 22, 44, 0.84);
-  backdrop-filter: blur(24px) saturate(170%);
-  -webkit-backdrop-filter: blur(24px) saturate(170%);
-  border: 1px solid rgba(239, 166, 201, 0.36);
-  box-shadow:
-    0 12px 36px rgba(8, 12, 32, 0.58),
-    0 0 24px rgba(244, 143, 181, 0.16),
-    inset 0 1px 1px rgba(255, 225, 240, 0.22);
-}
-
-.shoujo-nav-item {
-  border: 1px solid transparent;
-  transition:
-    background 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
-    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
-    border-color 0.25s ease,
-    color 0.25s ease,
-    box-shadow 0.25s ease;
-}
-
-.shoujo-nav-item:active {
-  transform: scale(0.92);
-}
-
-.shoujo-nav-item-active {
-  background: linear-gradient(145deg, rgba(245, 166, 195, 0.25), rgba(166, 141, 228, 0.22));
-  border-color: rgba(239, 166, 201, 0.52);
-  color: #ffdbeb;
-  box-shadow:
-    0 0 16px rgba(242, 147, 188, 0.22),
-    inset 0 1px 1px rgba(255, 235, 245, 0.25);
+@keyframes butterflyPulse {
+  0%, 100% {
+    opacity: 0.72;
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-5px) scale(1.04);
+  }
 }
 
 @keyframes microParticleRise {
@@ -314,10 +142,276 @@ body {
   }
 }
 
+.animate-fadeIn {
+  animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-modal-pop {
+  animation: modalPopIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-vinyl {
+  animation: vinylSpin 14s linear infinite;
+}
+
+.animate-float {
+  animation: floatGentle 4.5s ease-in-out infinite;
+}
+
+.animate-butterfly {
+  animation: butterflyPulse 5s ease-in-out infinite;
+}
+
 .animate-micro-particle-1 {
   animation: microParticleRise 2.4s ease-out infinite;
 }
 
 .animate-micro-particle-2 {
   animation: microParticleRise 2.8s ease-out 0.7s infinite;
+}
+
+/* ================= 统一童话琉璃容器与卡片质感 ================= */
+.glass-crystal {
+  background: var(--theme-surface-glass);
+  backdrop-filter: blur(22px) saturate(165%);
+  -webkit-backdrop-filter: blur(22px) saturate(165%);
+  border: 1px solid var(--theme-border-crystal);
+  box-shadow: var(--theme-card-shadow);
+}
+
+.fairy-card {
+  background: var(--theme-surface-card);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--theme-border-crystal);
+  box-shadow: var(--theme-card-shadow);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.fairy-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(246, 169, 205, 0.75);
+  box-shadow:
+    0 20px 44px -10px rgba(246, 169, 205, 0.32),
+    inset 0 1px 2px rgba(255, 240, 248, 0.5);
+}
+
+/* 拍立得相纸真实质感 (始终保持柔和奶油白，文字深紫确保清晰) */
+.polaroid-frame {
+  background: linear-gradient(180deg, #fff9f6 0%, #fff2f6 100%);
+  padding: 12px 12px 24px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(246, 169, 205, 0.55);
+  box-shadow:
+    0 16px 36px -10px rgba(41, 36, 69, 0.28),
+    inset 0 1px 2px rgba(255, 255, 255, 0.95);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.polaroid-frame:hover {
+  transform: translateY(-6px) rotate(0deg) scale(1.02);
+  box-shadow:
+    0 24px 48px -12px rgba(246, 169, 205, 0.4),
+    0 8px 20px -4px rgba(101, 84, 141, 0.22);
+}
+
+/* 和纸胶带仿真 */
+.washi-tape {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  width: 76px;
+  height: 22px;
+  background: rgba(255, 227, 181, 0.78);
+  backdrop-filter: blur(4px);
+  border-left: 2px dashed rgba(245, 198, 120, 0.75);
+  border-right: 2px dashed rgba(245, 198, 120, 0.75);
+  box-shadow: 0 2px 6px rgba(41, 36, 69, 0.12);
+  pointer-events: none;
+  z-index: 20;
+}
+
+.washi-tape-pink {
+  background: rgba(246, 169, 205, 0.75);
+  border-left: 2px dashed rgba(236, 125, 178, 0.6);
+  border-right: 2px dashed rgba(236, 125, 178, 0.6);
+}
+
+.shimmer-text {
+  background: linear-gradient(
+    90deg,
+    #fff5ef 0%,
+    #ffd1dc 30%,
+    #fff0f8 50%,
+    #ffe3b5 72%,
+    #fff5ef 100%
+  );
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: shimmerWave 6s linear infinite;
+}
+
+.writing-mode-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+/* ================= 少女感蜜桃粉 / 樱花粉果冻按钮系统 ================= */
+.btn-shoujo-primary {
+  background: linear-gradient(135deg, #f6a9cd 0%, #f47fa9 52%, #a995d0 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 240, 248, 0.68);
+  box-shadow:
+    0 8px 24px -4px rgba(244, 127, 169, 0.42),
+    0 2px 8px -2px rgba(169, 149, 208, 0.35),
+    inset 0 2px 3px rgba(255, 255, 255, 0.55),
+    inset 0 -2px 4px rgba(157, 78, 125, 0.22);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-shoujo-primary:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow:
+    0 12px 30px -4px rgba(244, 127, 169, 0.58),
+    0 4px 12px -2px rgba(169, 149, 208, 0.45),
+    inset 0 2px 4px rgba(255, 255, 255, 0.72);
+}
+
+.btn-shoujo-primary:active {
+  transform: translateY(0) scale(0.96);
+}
+
+.btn-shoujo-glass {
+  background: rgba(255, 240, 248, 0.22);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  color: var(--theme-text-primary);
+  border: 1px solid rgba(246, 169, 205, 0.52);
+  box-shadow:
+    0 6px 20px -4px rgba(169, 149, 208, 0.22),
+    inset 0 1px 2px rgba(255, 255, 255, 0.45);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-shoujo-glass:hover {
+  background: rgba(255, 209, 220, 0.35);
+  border-color: rgba(246, 169, 205, 0.85);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.btn-shoujo-glass:active {
+  transform: scale(0.96);
+}
+
+.btn-shoujo-pill-active {
+  background: linear-gradient(135deg, #f6a9cd 0%, #f47fa9 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 240, 248, 0.65);
+  box-shadow:
+    0 4px 14px -2px rgba(244, 127, 169, 0.42),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.5);
+}
+
+.btn-shoujo-pill-idle {
+  background: var(--theme-surface-glass);
+  color: var(--theme-text-secondary);
+  border: 1px solid var(--theme-border-crystal);
+  backdrop-filter: blur(10px);
+  transition: all 0.25s ease;
+}
+
+.btn-shoujo-pill-idle:hover {
+  background: rgba(246, 169, 205, 0.24);
+  border-color: rgba(246, 169, 205, 0.65);
+}
+
+/* ================= 少女感导航栏样式 ================= */
+.shoujo-top-nav {
+  background: rgba(169, 149, 208, 0.28);
+  backdrop-filter: blur(24px) saturate(165%);
+  -webkit-backdrop-filter: blur(24px) saturate(165%);
+  border-bottom: 1px solid rgba(246, 169, 205, 0.42);
+  box-shadow: 0 6px 28px rgba(41, 36, 69, 0.16);
+}
+
+html.dark .shoujo-top-nav {
+  background: rgba(41, 36, 69, 0.68);
+  border-bottom: 1px solid rgba(246, 169, 205, 0.32);
+  box-shadow: 0 6px 28px rgba(19, 15, 38, 0.38);
+}
+
+.shoujo-bottom-nav {
+  background: rgba(65, 52, 104, 0.78);
+  backdrop-filter: blur(24px) saturate(170%);
+  -webkit-backdrop-filter: blur(24px) saturate(170%);
+  border: 1px solid rgba(246, 169, 205, 0.48);
+  box-shadow:
+    0 10px 32px rgba(41, 36, 69, 0.45),
+    0 0 22px rgba(246, 169, 205, 0.2),
+    inset 0 1px 1px rgba(255, 240, 248, 0.3);
+}
+
+.shoujo-nav-item {
+  border: 1px solid transparent;
+  transition:
+    background 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.shoujo-nav-item:active {
+  transform: scale(0.92);
+}
+
+.shoujo-nav-item-active {
+  background: linear-gradient(145deg, rgba(246, 169, 205, 0.34), rgba(169, 149, 208, 0.28));
+  border-color: rgba(255, 209, 220, 0.65);
+  color: #fff5ef;
+  box-shadow:
+    0 0 16px rgba(246, 169, 205, 0.28),
+    inset 0 1px 1px rgba(255, 240, 248, 0.35);
+}
+
+/* ================= 统一浪漫表单输入框样式 ================= */
+.romantic-input {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  background: rgba(255, 245, 248, 0.72);
+  color: #3a2c54;
+  border: 1.5px solid rgba(246, 169, 205, 0.5);
+  transition: all 0.25s ease;
+  outline: none;
+}
+
+.romantic-input::placeholder {
+  color: #9e8cb9;
+}
+
+.romantic-input:focus {
+  border-color: #f47fa9;
+  box-shadow: 0 0 0 3px rgba(246, 169, 205, 0.25);
+  background: rgba(255, 250, 252, 0.92);
+}
+
+html.dark .romantic-input {
+  background: rgba(41, 36, 69, 0.68);
+  color: #fff5ef;
+  border-color: rgba(246, 169, 205, 0.35);
+}
+
+html.dark .romantic-input::placeholder {
+  color: #a995d0;
+}
+
+html.dark .romantic-input:focus {
+  border-color: #f6a9cd;
+  box-shadow: 0 0 0 3px rgba(246, 169, 205, 0.22);
+  background: rgba(54, 46, 90, 0.85);
 }

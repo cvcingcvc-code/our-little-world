@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Sparkles, Heart, ArrowRight } from "lucide-react";
+import { Sparkles, Heart } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
 export default function OpeningCurtain({ onFinish }: { onFinish?: () => void }) {
@@ -18,69 +18,87 @@ export default function OpeningCurtain({ onFinish }: { onFinish?: () => void }) 
   }, [onFinish]);
 
   const handleEnter = () => {
+    if (fadeOut) return;
     setFadeOut(true);
     sessionStorage.setItem("olw_opening_seen", "true");
     setTimeout(() => {
       setShow(false);
       onFinish?.();
-    }, 900);
+    }, 1000);
   };
 
   if (!show) return null;
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden transition-all duration-1000 ${
-        fadeOut ? "opacity-0 scale-105 pointer-events-none" : "opacity-100 scale-100"
+      onClick={handleEnter}
+      className={`fixed inset-0 z-50 flex flex-col items-center justify-between py-12 sm:py-16 px-6 overflow-hidden cursor-pointer select-none transition-all duration-1000 ${
+        fadeOut ? "opacity-0 scale-105 pointer-events-none filter blur-sm" : "opacity-100 scale-100"
       }`}
     >
-      {/* 4K 超高清大图背景与电影级慢镜微缩放 */}
-      <div className="absolute inset-0 bg-slate-950">
+      {/* 4K 超高清全景背景与电影级慢镜微缩放 */}
+      <div className="absolute inset-0 bg-slate-950 -z-10">
         <Image
           src="/winter-hero-hd.jpg"
           alt="冬日恋歌主视觉"
           fill
           priority
           quality={100}
-          className="object-cover object-center filter brightness-[0.8] scale-100 animate-pulse duration-[10000ms]"
+          className="object-cover object-center filter brightness-[0.78] scale-100 transition-transform duration-[12000ms] ease-out hover:scale-105"
         />
-        {/* 电影级晕映渐变 */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/50 to-slate-950/80" />
+        {/* 电影级微光暗角与漫射柔焦 */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-slate-950/70" />
       </div>
 
-      {/* 核心文案水晶卡片 */}
-      <div className="relative z-10 max-w-xl mx-4 text-center px-8 py-12 rounded-[2.5rem] bg-slate-950/50 backdrop-blur-2xl border border-white/20 shadow-[0_0_50px_rgba(0,0,0,0.5)] space-y-7 animate-fadeIn">
-        <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-light tracking-[0.25em] text-sky-200 bg-sky-500/15 border border-sky-400/30 shadow-inner">
-          <Sparkles className="w-3.5 h-3.5 text-sky-300 animate-spin" />
-          <span>WINTER LOVE · 殿堂级数字恋爱馆</span>
+      {/* 顶部：极简典雅徽标与可跳过微注 */}
+      <div className="relative z-10 w-full max-w-5xl flex items-center justify-between animate-fadeIn">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-[11px] font-cinzel tracking-[0.25em] text-slate-200/90 bg-white/10 backdrop-blur-md border border-white/15">
+          <Sparkles className="w-3 h-3 text-rose-300 animate-spin" />
+          <span>OUR LITTLE WORLD // WINTER ARCHIVE</span>
+        </div>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleEnter();
+          }}
+          className="text-[11px] font-light tracking-widest text-slate-400 hover:text-white transition-colors px-3 py-1 rounded-full bg-black/20 hover:bg-black/40 border border-white/10"
+        >
+          SKIP ⤑
+        </button>
+      </div>
+
+      {/* 中央：电影级典雅排版（无死板方框，纯粹光影美感） */}
+      <div className="relative z-10 max-w-2xl text-center space-y-6 sm:space-y-8 animate-fadeIn">
+        <div className="inline-flex items-center gap-2 text-rose-300/90 text-xs font-serif-sc tracking-[0.3em]">
+          <Heart className="w-3.5 h-3.5 fill-rose-400 text-rose-400 animate-pulse" />
+          <span>二人の小さな世界 · 永遠の冬</span>
         </div>
 
-        <div className="space-y-3.5">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extralight tracking-wider text-white drop-shadow-lg font-serif">
-            {siteConfig.mainMotto}
+        <div className="space-y-4">
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-serif-sc font-light tracking-wider text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)] leading-tight">
+            {siteConfig.mainMotto.split("，")[0]}，<br />
+            <span className="shimmer-text font-normal font-serif-sc">
+              {siteConfig.mainMotto.split("，")[1] || "幸好有你。"}
+            </span>
           </h1>
-          <p className="text-sm sm:text-base text-slate-200/90 font-light tracking-widest leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-200/90 font-cormorant italic tracking-[0.15em] drop-shadow">
+            &ldquo;Every precious moment with you, quietly treasured forever.&rdquo;
+          </p>
+          <p className="text-xs sm:text-sm text-slate-300/80 font-serif-sc font-light tracking-widest">
             {siteConfig.subMotto}
           </p>
         </div>
+      </div>
 
-        <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3.5">
-          <button
-            onClick={handleEnter}
-            className="w-full sm:w-auto px-8 py-3.5 rounded-full text-xs sm:text-sm font-medium tracking-wider text-white bg-gradient-to-r from-rose-500/90 via-pink-500/90 to-indigo-600/90 hover:from-rose-500 hover:to-indigo-600 border border-white/30 shadow-[0_0_20px_rgba(244,63,94,0.35)] hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2.5 group cursor-pointer"
-          >
-            <Heart className="w-4 h-4 text-rose-200 fill-rose-200 group-hover:scale-125 transition-transform" />
-            <span>开启我们的小世界</span>
-            <ArrowRight className="w-4 h-4 text-white/80 group-hover:translate-x-1 transition-transform" />
-          </button>
-
-          <button
-            onClick={handleEnter}
-            className="text-xs text-slate-400 hover:text-white px-5 py-2.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer border-none bg-transparent"
-          >
-            直接跳过
-          </button>
+      {/* 底部：微光呼吸提示（引导自然轻触进入） */}
+      <div className="relative z-10 flex flex-col items-center gap-3 animate-fadeIn">
+        <div className="px-6 py-2.5 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-xl border border-white/30 shadow-[0_0_25px_rgba(244,63,94,0.3)] transition-all transform hover:scale-105 flex items-center gap-2.5 text-xs text-white tracking-[0.2em] font-light">
+          <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-ping" />
+          <span>轻触任意处 · 步入我们的小世界</span>
         </div>
+        <span className="text-[10px] text-slate-400/80 tracking-[0.3em] font-cinzel">
+          CLICK ANYWHERE TO ENTER
+        </span>
       </div>
     </div>
   );

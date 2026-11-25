@@ -11,6 +11,18 @@ interface Flake {
   alpha: number;
   speedY: number;
   speedX: number;
+  swaySpeed: number;
+  swayOffset: number;
+}
+
+interface BokehOrb {
+  x: number;
+  y: number;
+  radius: number;
+  alpha: number;
+  speedY: number;
+  speedX: number;
+  color: string;
 }
 
 export default function Snowfall() {
@@ -37,55 +49,95 @@ export default function Snowfall() {
 
     window.addEventListener("resize", handleResize);
 
-    // 根据屏幕宽度自适应雪花总数
-    const flakeCount = width < 768 ? 45 : 90;
+    // 1. 常规飘雪粒子（包含细钻粉雪与轻柔雪花）
+    const isMobile = width < 768;
+    const flakeCount = isMobile ? 40 : 85;
     const flakes: Flake[] = [];
 
     for (let i = 0; i < flakeCount; i++) {
+      const isDiamondDust = Math.random() < 0.25;
       flakes.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        radius: Math.random() * 2.8 + 0.8,
+        radius: isDiamondDust ? Math.random() * 1.2 + 0.6 : Math.random() * 2.8 + 1.2,
         density: Math.random() * flakeCount,
-        alpha: Math.random() * 0.7 + 0.3,
-        speedY: Math.random() * 0.9 + 0.5,
-        speedX: Math.sin(Math.random() * Math.PI * 2) * 0.3,
+        alpha: Math.random() * 0.7 + 0.25,
+        speedY: Math.random() * 0.8 + 0.4,
+        speedX: Math.sin(Math.random() * Math.PI * 2) * 0.25,
+        swaySpeed: Math.random() * 0.015 + 0.008,
+        swayOffset: Math.random() * Math.PI * 2,
+      });
+    }
+
+    // 2. 电影级大光圈前景光斑 (Bokeh Orbs) - 暖金与冰粉弥散光球
+    const bokehCount = isMobile ? 3 : 7;
+    const bokehColors = [
+      "rgba(253, 230, 138, ", // 暖金
+      "rgba(244, 208, 222, ", // 樱粉
+      "rgba(224, 242, 254, ", // 冰蓝
+    ];
+    const bokehOrbs: BokehOrb[] = [];
+
+    for (let i = 0; i < bokehCount; i++) {
+      bokehOrbs.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: Math.random() * 28 + 14,
+        alpha: Math.random() * 0.12 + 0.05,
+        speedY: Math.random() * 0.3 + 0.15,
+        speedX: (Math.random() - 0.5) * 0.2,
+        color: bokehColors[i % bokehColors.length],
       });
     }
 
     let animationFrameId: number;
-    let angle = 0;
+    let time = 0;
 
     const render = () => {
       ctx.clearRect(0, 0, width, height);
-      angle += 0.008;
+      time += 1;
 
-      ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+      // 绘制前景大光斑 (Bokeh)
+      for (let i = 0; i < bokehCount; i++) {
+        const b = bokehOrbs[i];
+        const gradient = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.radius);
+        gradient.addColorStop(0, `${b.color}${b.alpha * 1.6})`);
+        gradient.addColorStop(0.5, `${b.color}${b.alpha})`);
+        gradient.addColorStop(1, `${b.color}0)`);
 
-      for (let i = 0; i < flakeCount; i++) {
-        const f = flakes[i];
+        ctx.fillStyle = gradient;
         ctx.beginPath();
-        ctx.arc(f.x, f.y, f.radius, 0, Math.PI * 2, true);
-        ctx.fillStyle = `rgba(240, 248, 255, ${f.alpha})`;
-        ctx.shadowBlur = 4;
-        ctx.shadowColor = "rgba(224, 242, 254, 0.6)";
+        ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
         ctx.fill();
 
-        // 飘落逻辑
-        f.y += f.speedY;
-        f.x += Math.sin(angle + f.density) * 0.6 + f.speedX;
+        b.y += b.speedY;
+        b.x += b.speedX;
 
-        // 触底或出界重置
-        if (f.y > height) {
-          flakes[i] = {
-            x: Math.random() * width,
-            y: -10,
-            radius: f.radius,
-            density: f.density,
-            alpha: f.alpha,
-            speedY: f.speedY,
-            speedX: f.speedX,
-          };
+        if (b.y > height + b.radius) {
+          b.y = -b.radius;
+          b.x = Math.random() * width;
+        }
+      }
+
+      // 绘制细致飘雪与粉雪
+      for (let i = 0; i < flakeCount; i++) {
+        const f = flakes[i];
+        const sway = Math.sin(time * f.swaySpeed + f.swayOffset) * 0.8;
+
+        ctx.beginPath();
+        ctx.arc(f.x + sway, f.y, f.radius, 0, Math.PI * 2, true);
+        ctx.fillStyle = `rgba(245, 250, 255, ${f.alpha})`;
+        ctx.shadowBlur = 4;
+        ctx.shadowColor = "rgba(224, 242, 254, 0.45)";
+        ctx.fill();
+
+        f.y += f.speedY;
+        f.x += f.speedX;
+
+        // 触底或左右出界重置
+        if (f.y > height + 8) {
+          f.y = -8;
+          f.x = Math.random() * width;
         }
         if (f.x > width + 10) f.x = -10;
         else if (f.x < -10) f.x = width + 10;
@@ -107,8 +159,8 @@ export default function Snowfall() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-30"
-      aria-hidden="true"
+      className="fixed inset-0 pointer-events-none z-30 w-full h-full"
+      style={{ mixBlendMode: "screen" }}
     />
   );
 }

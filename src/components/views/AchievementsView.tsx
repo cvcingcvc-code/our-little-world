@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useApp } from "@/context/AppContext";
+import ExhibitionCover from "@/components/common/ExhibitionCover";
 import { Achievement } from "@/types";
 import { calculateAchievements } from "@/lib/storage";
 import {
@@ -57,44 +58,37 @@ export default function AchievementsView() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8 animate-fadeIn">
-      {/* 头部区与成就总勋章 */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-200 dark:border-slate-800">
-        <div className="space-y-3 max-w-xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-light text-amber-600 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 border border-amber-200/50">
-            <Trophy className="w-3.5 h-3.5 text-amber-500" />
-            <span>荣誉殿堂 · 真实数据联动解锁</span>
-          </div>
-          <h2 className="text-2xl sm:text-3xl font-light tracking-tight text-slate-800 dark:text-slate-100">
-            恋爱成就里程碑
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-            每一个勋章都由真实的生活点滴淬炼而成。绝不虚构冒充，见证两颗心真真切切的成长。
-          </p>
+    <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8 animate-fadeIn">
+      {/* 4K 动漫主题画报封面 + 全屏沉浸柔焦背景 */}
+      <ExhibitionCover
+        coverImage="/winter-gift-hd.jpg"
+        badge="🏆 荣誉殿堂 · LOVE ACHIEVEMENTS"
+        englishTag="CHAPTER 08 // MILESTONE MEDALS"
+        title="恋爱成就里程碑"
+        subtitle="每一个勋章都由真实的生活点滴淬炼而成。绝不虚构冒充，见证两颗心真真切切的成长。"
+      />
 
-          {/* 总体解锁进度卡片 */}
-          <div className="p-4 rounded-2xl bg-amber-50/50 dark:bg-slate-900 border border-amber-200/60 dark:border-slate-800 space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-700 dark:text-slate-300 font-medium flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-amber-500" />
-                <span>勋章点亮率</span>
-              </span>
-              <span className="text-amber-600 dark:text-amber-400 font-semibold">
-                已点亮 {unlockedCount} / {achievements.length} 枚 ({unlockRate}%)
-              </span>
-            </div>
-            <div className="w-full h-2.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-amber-400 via-rose-400 to-indigo-500 transition-all duration-700 rounded-full"
-                style={{ width: `${unlockRate}%` }}
-              />
-            </div>
-          </div>
+      {/* 总体解锁进度卡片 */}
+      <div className="relative z-10 p-5 rounded-3xl glass-crystal border border-pink-200/25 space-y-2.5">
+        <div className="flex items-center justify-between text-xs font-serif-sc">
+          <span className="text-pink-100 font-medium flex items-center gap-1.5">
+            <Sparkles className="w-4 h-4 text-amber-300" />
+            <span>勋章点亮率</span>
+          </span>
+          <span className="text-pink-300 font-semibold">
+            已点亮 {unlockedCount} / {achievements.length} 枚 ({unlockRate}%)
+          </span>
+        </div>
+        <div className="w-full h-2.5 rounded-full bg-slate-800/80 overflow-hidden border border-white/10">
+          <div
+            className="h-full bg-gradient-to-r from-amber-300 via-pink-400 to-purple-400 transition-all duration-700 rounded-full"
+            style={{ width: `${unlockRate}%` }}
+          />
         </div>
       </div>
 
       {/* 成就勋章网格 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {achievements.map((ach) => {
           const percent = Math.min(
             100,

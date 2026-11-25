@@ -6,6 +6,7 @@ import { useApp } from "@/context/AppContext";
 import { GiftRecord } from "@/types";
 import { getGiftRecords, saveGiftRecord, deleteGiftRecord } from "@/lib/storage";
 import { processImageFile } from "@/lib/upload";
+import ExhibitionCover from "@/components/common/ExhibitionCover";
 import {
   Gift,
   Plus,
@@ -124,33 +125,27 @@ export default function GiftsView() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10 sm:py-14 space-y-10 animate-fadeIn">
-      {/* 展厅头部 */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-200/80 dark:border-white/10">
-        <div className="space-y-2.5">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-light text-indigo-600 dark:text-indigo-300 bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-200/50 backdrop-blur-md">
-            <Gift className="w-3.5 h-3.5" />
-            <span>藏在岁月里的心意 · 礼物博物馆</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-light tracking-tight text-slate-800 dark:text-slate-100 font-serif">
-            礼物与惊喜博物馆
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-light">
-            礼物的价值不在于价格标签，而在于你拆开包装时心底荡漾起的微波。当前珍藏 {gifts.length} 份心意。
-          </p>
-        </div>
-
-        <button
-          onClick={() => setModalOpen(true)}
-          className="px-5 py-2.5 rounded-full text-xs font-medium text-white bg-gradient-to-r from-indigo-500 to-rose-500 hover:from-indigo-600 hover:to-rose-600 shadow-lg shadow-indigo-500/20 transition cursor-pointer flex items-center gap-1.5 border-none self-start md:self-auto"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          <span>记录一份新心意</span>
-        </button>
-      </div>
+    <div className="relative max-w-7xl mx-auto px-4 sm:px-8 py-8 sm:py-12 space-y-8 animate-fadeIn">
+      {/* 4K 礼盒惊喜主题封面 + 全屏沉浸柔焦背景 */}
+      <ExhibitionCover
+        coverImage="/winter-gift-hd.jpg"
+        badge="🎀 心动礼遇 · GIFT & SURPRISE MUSEUM"
+        englishTag="CHAPTER 03 // PRECIOUS GIFTS"
+        title="礼物与惊喜博物馆"
+        subtitle={`礼物的价值不在于价格标签，而在于你拆开包装时心底荡漾起的微波。当前珍藏 ${gifts.length} 份心意。`}
+        actions={
+          <button
+            onClick={() => setModalOpen(true)}
+            className="btn-shoujo-primary px-6 py-2.5 rounded-full text-xs font-serif-sc font-medium tracking-wider cursor-pointer flex items-center gap-2"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>记录一份新心意</span>
+          </button>
+        }
+      />
 
       {gifts.length > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             {[
               { id: "all", label: "全部心意" },
@@ -160,10 +155,8 @@ export default function GiftsView() {
               <button
                 key={item.id}
                 onClick={() => setFilterGiver(item.id)}
-                className={`px-4 py-1.5 rounded-full text-xs font-medium transition cursor-pointer border-none outline-none ${
-                  filterGiver === item.id
-                    ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-sm"
-                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200"
+                className={`px-4 py-1.5 rounded-full text-xs font-serif-sc tracking-wider cursor-pointer outline-none ${
+                  filterGiver === item.id ? "btn-shoujo-pill-active" : "btn-shoujo-pill-idle"
                 }`}
               >
                 {item.label}

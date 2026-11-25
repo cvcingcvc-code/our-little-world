@@ -7,6 +7,7 @@ import { useApp } from "@/context/AppContext";
 import { WishItem } from "@/types";
 import { getWishItems, saveWishItem, updateWishStatus, deleteWishItem } from "@/lib/storage";
 import { processImageFile } from "@/lib/upload";
+import ExhibitionCover from "@/components/common/ExhibitionCover";
 import {
   ListTodo,
   Plus,
@@ -153,52 +154,46 @@ export default function WishesView() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8 animate-fadeIn">
-      {/* 头部区与愿望进度条 */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-200 dark:border-slate-800">
-        <div className="space-y-3 max-w-xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-light text-sky-600 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/40 border border-sky-200/50">
-            <ListTodo className="w-3.5 h-3.5" />
-            <span>携手奔赴的清单 · 我们的100件小事</span>
-          </div>
-          <h2 className="text-2xl sm:text-3xl font-light tracking-tight text-slate-800 dark:text-slate-100">
-            想和你一起完成的100件小事
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-            一辈子很长，但有了你，每一件微小的事情都变成了闪闪发光的期盼。
-          </p>
+    <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8 animate-fadeIn">
+      {/* 4K 动漫主题画报封面 + 全屏沉浸柔焦背景 */}
+      <ExhibitionCover
+        coverImage="/winter-hero-hd.jpg"
+        badge="🌠 星愿清单 · 100 ROMANTIC WISHES"
+        englishTag="CHAPTER 04 // BUCKET LIST"
+        title="想和你一起完成的100件小事"
+        subtitle="一辈子很长，但有了你，每一件微小的事情都变成了闪闪发光的期盼。"
+        actions={
+          <button
+            onClick={() => setAddModalOpen(true)}
+            className="btn-shoujo-primary px-6 py-2.5 rounded-full text-xs font-serif-sc font-medium tracking-wider cursor-pointer flex items-center gap-2"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>写下一件小事</span>
+          </button>
+        }
+      />
 
-          {/* 进度条卡片 */}
-          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-600 dark:text-slate-300 font-medium flex items-center gap-1.5">
-                <Trophy className="w-4 h-4 text-amber-500" />
-                <span>共同奔赴进度</span>
-              </span>
-              <span className="text-rose-600 dark:text-rose-400 font-semibold">
-                已点亮 {completedCount} / {wishes.length} ({progressPercent}%)
-              </span>
-            </div>
-            <div className="w-full h-2.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-sky-400 via-indigo-500 to-rose-500 transition-all duration-700 rounded-full"
-                style={{ width: `${progressPercent}%` }}
-              />
-            </div>
-          </div>
+      {/* 进度条卡片 */}
+      <div className="relative z-10 p-5 rounded-3xl glass-crystal border border-pink-200/25 space-y-2.5">
+        <div className="flex items-center justify-between text-xs font-serif-sc">
+          <span className="text-pink-100 font-medium flex items-center gap-1.5">
+            <Trophy className="w-4 h-4 text-amber-300" />
+            <span>共同奔赴进度</span>
+          </span>
+          <span className="text-pink-300 font-semibold">
+            已点亮 {completedCount} / {wishes.length} ({progressPercent}%)
+          </span>
         </div>
-
-        <button
-          onClick={() => setAddModalOpen(true)}
-          className="px-4 py-2.5 rounded-full text-xs font-medium text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 shadow-md shadow-sky-500/20 transition flex items-center gap-1.5 cursor-pointer self-start md:self-auto"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          <span>写下一件小事</span>
-        </button>
+        <div className="w-full h-2.5 rounded-full bg-slate-800/80 overflow-hidden border border-white/10">
+          <div
+            className="h-full bg-gradient-to-r from-pink-400 via-rose-400 to-purple-400 transition-all duration-700 rounded-full"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
       </div>
 
       {/* 状态与分类筛选 */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           {[
             { id: "all", label: `全部 (${wishes.length})` },

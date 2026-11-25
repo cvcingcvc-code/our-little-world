@@ -286,21 +286,22 @@ export default function HomeView({ onNavigate }: { onNavigate: (tab: NavTab) => 
               )}
             </div>
 
-            {/* 快速入馆按钮 */}
-            <div className="flex flex-wrap items-center gap-3 pt-2">
+            {/* 快速入馆按钮（少女感糖果果冻按钮） */}
+            <div className="flex flex-wrap items-center gap-3.5 pt-2">
               <button
                 onClick={() => onNavigate("gallery")}
-                className="px-8 py-3.5 rounded-full text-xs sm:text-sm font-serif-sc font-medium tracking-widest text-white bg-gradient-to-r from-rose-500 via-pink-500 to-indigo-600 shadow-[0_10px_30px_rgba(244,63,94,0.4)] hover:shadow-[0_15px_40px_rgba(244,63,94,0.6)] hover:scale-105 transition-all cursor-pointer border-none flex items-center gap-2.5 group"
+                className="btn-shoujo-primary px-8 py-3.5 rounded-full text-xs sm:text-sm font-serif-sc font-medium tracking-widest cursor-pointer flex items-center gap-2.5 group"
               >
+                <Heart className="w-4 h-4 fill-white/90 text-white animate-pulse" />
                 <span>步入可爱相册馆</span>
                 <ArrowRight className="w-4 h-4 text-white/90 group-hover:translate-x-1.5 transition-transform" />
               </button>
 
               <button
                 onClick={() => onNavigate("starry")}
-                className="px-7 py-3.5 rounded-full text-xs sm:text-sm font-serif-sc tracking-widest text-slate-100 bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/20 shadow-lg transition-all hover:scale-105 cursor-pointer flex items-center gap-2"
+                className="btn-shoujo-glass px-7 py-3.5 rounded-full text-xs sm:text-sm font-serif-sc tracking-widest cursor-pointer flex items-center gap-2"
               >
-                <Sparkles className="w-4 h-4 text-sky-300" />
+                <Sparkles className="w-4 h-4 text-pink-300 animate-spin" />
                 <span>仰望专属恋爱星空</span>
               </button>
             </div>
@@ -568,10 +569,11 @@ export default function HomeView({ onNavigate }: { onNavigate: (tab: NavTab) => 
 
             <button
               onClick={() => onNavigate("starry")}
-              className="px-8 py-3.5 rounded-full text-xs sm:text-sm font-serif-sc font-medium tracking-widest text-slate-900 bg-white hover:bg-sky-100 shadow-[0_0_30px_rgba(255,255,255,0.4)] transition-all transform group-hover:scale-105 cursor-pointer border-none flex items-center gap-2 shrink-0"
+              className="btn-shoujo-primary px-8 py-3.5 rounded-full text-xs sm:text-sm font-serif-sc font-medium tracking-widest cursor-pointer flex items-center gap-2 shrink-0"
             >
+              <Sparkles className="w-4 h-4 text-white animate-spin" />
               <span>仰望星空</span>
-              <ArrowRight className="w-4 h-4 text-slate-900 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
         </div>

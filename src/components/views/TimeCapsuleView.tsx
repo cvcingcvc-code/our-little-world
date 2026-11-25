@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useApp } from "@/context/AppContext";
+import ExhibitionCover from "@/components/common/ExhibitionCover";
 import { TimeCapsule } from "@/types";
 import { getTimeCapsules, saveTimeCapsule } from "@/lib/storage";
 import {
@@ -67,33 +68,27 @@ export default function TimeCapsuleView() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8 animate-fadeIn">
-      {/* 头部区 */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-light text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200/50">
-            <Mail className="w-3.5 h-3.5" />
-            <span>寄往未来的慢递情书 · 时光信箱</span>
-          </div>
-          <h2 className="text-2xl sm:text-3xl font-light tracking-tight text-slate-800 dark:text-slate-100">
-            给未来的慢速情书
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-            写下一封信投递给未来的彼此，设置解锁之期。未到解封时刻，信件将严格封存保密。
-          </p>
-        </div>
-
-        <button
-          onClick={() => setModalOpen(true)}
-          className="px-4 py-2.5 rounded-full text-xs font-medium text-white bg-gradient-to-r from-indigo-500 to-rose-500 hover:from-indigo-600 hover:to-rose-600 shadow-md shadow-indigo-500/20 transition flex items-center gap-1.5 cursor-pointer self-start md:self-auto"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          <span>撰写未来信件</span>
-        </button>
-      </div>
+    <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8 animate-fadeIn">
+      {/* 4K 动漫主题画报封面 + 全屏沉浸柔焦背景 */}
+      <ExhibitionCover
+        coverImage="/winter-hero-hd.jpg"
+        badge="✉️ 慢递情书 · TIME CAPSULE"
+        englishTag="CHAPTER 09 // LETTERS TO FUTURE"
+        title="给未来的慢速情书"
+        subtitle="写下一封信投递给未来的彼此，设置解锁之期。未到解封时刻，信件将严格封存保密。"
+        actions={
+          <button
+            onClick={() => setModalOpen(true)}
+            className="btn-shoujo-primary px-6 py-2.5 rounded-full text-xs font-serif-sc font-medium tracking-wider cursor-pointer flex items-center gap-2"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>撰写未来信件</span>
+          </button>
+        }
+      />
 
       {/* 信件网格卡片 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-6">
         {capsules.map((capsule) => {
           const isLocked = capsule.isSealed;
           const remain = getRemainingDays(capsule.unlockAt);

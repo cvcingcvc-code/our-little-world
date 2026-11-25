@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useApp } from "@/context/AppContext";
 import { StarMemory } from "@/types";
 import { getStarMemories, saveStarMemory, deleteStarMemory } from "@/lib/storage";
+import ExhibitionCover from "@/components/common/ExhibitionCover";
 import {
   Sparkles,
   Plus,
@@ -213,51 +214,54 @@ export default function StarryView() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-6 animate-fadeIn">
-      {/* 头部区域 */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-light text-indigo-400 bg-indigo-950/40 border border-indigo-400/30">
-            <Sparkles className="w-3.5 h-3.5 text-indigo-300" />
-            <span>核心特色 · 专属恋爱星空</span>
-          </div>
-          <h2 className="text-2xl sm:text-3xl font-light tracking-tight text-slate-800 dark:text-slate-100">
-            星河璀璨，皆是你我回忆
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-            每一次心动，都会在我们的专属星空里凝结成一颗璀璨的星辰。点击任意星星翻阅专属回忆。
-          </p>
-        </div>
+    <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8 animate-fadeIn">
+      {/* 4K 动漫主题画报封面 + 全屏沉浸柔焦背景 */}
+      <ExhibitionCover
+        coverImage="/winter-hero-hd.jpg"
+        badge="✨ 星河誓约 · EXCLUSIVE CONSTELLATION"
+        englishTag="CHAPTER 05 // STARRY CHRONICLE"
+        title="专属恋爱星空 · 星河皆你"
+        subtitle="每一次心动，都会在我们的冬夜星河里凝结成一颗璀璨的星辰。轻触星星翻阅专属回忆。"
+        actions={
+          <button
+            onClick={() => setAddModalOpen(true)}
+            className="btn-shoujo-primary px-6 py-2.5 rounded-full text-xs font-serif-sc font-medium tracking-wider cursor-pointer flex items-center gap-2"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-white animate-spin" />
+            <span>升起一颗新星</span>
+          </button>
+        }
+      />
 
-        <button
-          onClick={() => setAddModalOpen(true)}
-          className="px-4 py-2.5 rounded-full text-xs font-medium text-white bg-gradient-to-r from-indigo-600 to-rose-600 hover:from-indigo-700 hover:to-rose-700 shadow-md shadow-indigo-500/20 transition flex items-center gap-1.5 cursor-pointer self-start md:self-auto"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          <span>升起一颗新星</span>
-        </button>
-      </div>
-
-      {/* 交互式星空画布容器 */}
+      {/* 交互式星空画布容器（底层融入冬夜古堡少女梦幻星河） */}
       <div
         ref={containerRef}
-        className="relative w-full h-[520px] sm:h-[620px] rounded-3xl overflow-hidden bg-radial from-slate-900 via-slate-950 to-black border border-indigo-500/20 shadow-2xl cursor-crosshair select-none"
+        className="relative z-10 w-full h-[520px] sm:h-[640px] rounded-[2rem] overflow-hidden bg-[#050814] border border-pink-200/30 shadow-[0_20px_60px_rgba(0,0,0,0.65)] cursor-crosshair select-none"
       >
+        {/* 梦幻星夜底图叠加 */}
+        <Image
+          src="/winter-hero-hd.jpg"
+          alt="冬夜星河底图"
+          fill
+          className="object-cover object-center opacity-28 filter hue-rotate-15 contrast-110 pointer-events-none"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050814]/90 via-indigo-950/45 to-[#050814]/70 pointer-events-none" />
+
         <canvas
           ref={canvasRef}
           onClick={handleCanvasClick}
-          className="absolute inset-0 w-full h-full block"
+          className="relative z-10 w-full h-full block"
         />
 
         {/* 顶部小操作提示 */}
-        <div className="absolute top-4 left-4 pointer-events-none text-xs text-indigo-200/80 bg-slate-900/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 flex items-center gap-2">
+        <div className="absolute top-4 left-4 z-20 pointer-events-none text-xs text-pink-100 bg-slate-950/65 backdrop-blur-xl px-4 py-1.5 rounded-full border border-pink-200/25 flex items-center gap-2 shadow-lg">
           <Star className="w-3.5 h-3.5 text-amber-300 fill-amber-300 animate-pulse" />
           <span>星空中共有 {stars.length} 颗心动之星 · 轻触星星查看详情</span>
         </div>
 
         {/* 悬浮/激活星星回忆弹窗卡片 */}
         {activeStar && (
-          <div className="absolute bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:bottom-6 sm:max-w-sm bg-slate-900/90 backdrop-blur-xl border border-white/20 rounded-3xl p-5 text-white shadow-2xl animate-fadeIn space-y-3 pointer-events-auto">
+          <div className="absolute z-20 bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:bottom-6 sm:max-w-sm bg-slate-950/85 backdrop-blur-2xl border border-pink-200/30 rounded-3xl p-5 text-white shadow-2xl animate-fadeIn space-y-3 pointer-events-auto">
             <div className="flex items-start justify-between">
               <div className="space-y-0.5">
                 <span

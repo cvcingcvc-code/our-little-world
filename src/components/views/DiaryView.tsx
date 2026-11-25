@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useApp } from "@/context/AppContext";
+import ExhibitionCover from "@/components/common/ExhibitionCover";
 import { DiaryEntry } from "@/types";
 import { getDiaries, saveDiary, deleteDiary } from "@/lib/storage";
 import {
@@ -99,34 +100,28 @@ export default function DiaryView() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8 animate-fadeIn">
-      {/* 头部区 */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-light text-rose-600 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/40 border border-rose-200/50">
-            <BookHeart className="w-3.5 h-3.5" />
-            <span>笔下生香 · 纸短情长的日常</span>
-          </div>
-          <h2 className="text-2xl sm:text-3xl font-light tracking-tight text-slate-800 dark:text-slate-100">
-            恋爱温暖日记
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-            记录日常小事、心情，以及今天又多喜欢你一点的理由。共记录 {diaries.length} 篇日记。
-          </p>
-        </div>
-
-        <button
-          onClick={() => setModalOpen(true)}
-          className="px-4 py-2.5 rounded-full text-xs font-medium text-white bg-gradient-to-r from-rose-500 to-indigo-600 hover:from-rose-600 hover:to-indigo-700 shadow-md shadow-rose-500/20 transition flex items-center gap-1.5 cursor-pointer self-start md:self-auto"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          <span>写下一篇心语</span>
-        </button>
-      </div>
+    <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8 animate-fadeIn">
+      {/* 4K 动漫主题画报封面 + 全屏沉浸柔焦背景 */}
+      <ExhibitionCover
+        coverImage="/winter-cafe-hd.jpg"
+        badge="💌 纸短情长 · LOVE DIARY"
+        englishTag="CHAPTER 07 // DAILY WHISPERS"
+        title="恋爱温暖日记"
+        subtitle={`记录日常小事、心情，以及今天又多喜欢你一点的理由。共记录 ${diaries.length} 篇日记。`}
+        actions={
+          <button
+            onClick={() => setModalOpen(true)}
+            className="btn-shoujo-primary px-6 py-2.5 rounded-full text-xs font-serif-sc font-medium tracking-wider cursor-pointer flex items-center gap-2"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>写下一篇心语</span>
+          </button>
+        }
+      />
 
       {/* 日记列表 */}
       {diaries.length === 0 ? (
-        <div className="p-12 text-center rounded-3xl bg-slate-50 dark:bg-slate-900/50 border border-dashed border-slate-200 dark:border-slate-800 text-slate-400 space-y-2">
+        <div className="relative z-10 p-12 text-center rounded-[2rem] glass-crystal border border-pink-200/25 text-slate-300 space-y-3">
           <BookHeart className="w-10 h-10 mx-auto text-slate-300 dark:text-slate-600" />
           <p className="text-sm font-light">还没有写下日记呢，赶紧记录第一份心情吧</p>
         </div>

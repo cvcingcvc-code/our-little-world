@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
 import { useApp } from "@/context/AppContext";
+import ExhibitionCover from "@/components/common/ExhibitionCover";
 import { SecretNote, RandomDateIdea, PhotoItem } from "@/types";
 import { getInteractiveState, addMissCount, addSecretNote, getPhotos } from "@/lib/storage";
 import {
@@ -101,23 +102,18 @@ export default function InteractiveView() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-10 animate-fadeIn">
-      {/* 头部区 */}
-      <div className="space-y-2 pb-4 border-b border-slate-200 dark:border-slate-800">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-light text-rose-600 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/40 border border-rose-200/50">
-          <Users2 className="w-3.5 h-3.5" />
-          <span>两颗心的互动桥梁 · 双人互动空间</span>
-        </div>
-        <h2 className="text-2xl sm:text-3xl font-light tracking-tight text-slate-800 dark:text-slate-100">
-          双人互动乐园
-        </h2>
-        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-          心跳想念计数、秘密便利贴、回忆盲盒抽卡与周末约会灵感转盘。
-        </p>
-      </div>
+    <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-10 animate-fadeIn">
+      {/* 4K 动漫主题画报封面 + 全屏沉浸柔焦背景 */}
+      <ExhibitionCover
+        coverImage="/winter-close-hd.jpg"
+        badge="💕 双人心跳 · COUPLE INTERACTION"
+        englishTag="CHAPTER 10 // OUR SECRET SPACE"
+        title="双人互动乐园"
+        subtitle="心跳想念计数、秘密便利贴、回忆盲盒抽卡与周末约会灵感转盘。"
+      />
 
       {/* 1. 今日想你 心动双向计数牌 */}
-      <div className="bg-gradient-to-tr from-rose-50/80 via-white to-indigo-50/80 dark:from-slate-900 dark:via-slate-850 dark:to-slate-900 p-6 sm:p-8 rounded-3xl border border-rose-200/70 dark:border-slate-800 shadow-md space-y-6">
+      <div className="relative z-10 bg-gradient-to-tr from-rose-950/60 via-slate-900/70 to-indigo-950/60 backdrop-blur-xl p-6 sm:p-8 rounded-[2rem] border border-pink-200/30 shadow-2xl space-y-6">
         <div className="text-center space-y-1">
           <span className="text-xs text-rose-500 font-medium flex items-center justify-center gap-1">
             <Flame className="w-4 h-4 text-rose-500 animate-bounce" />

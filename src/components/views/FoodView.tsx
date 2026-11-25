@@ -6,6 +6,7 @@ import { useApp } from "@/context/AppContext";
 import { FoodRecord } from "@/types";
 import { getFoodRecords, saveFoodRecord, deleteFoodRecord, toggleFoodWishlist } from "@/lib/storage";
 import { processImageFile } from "@/lib/upload";
+import ExhibitionCover from "@/components/common/ExhibitionCover";
 import {
   UtensilsCrossed,
   Plus,
@@ -105,42 +106,34 @@ export default function FoodView() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10 sm:py-14 space-y-10 animate-fadeIn">
-      {/* 头部区 */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-200/80 dark:border-white/10">
-        <div className="space-y-2.5">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-light text-amber-600 dark:text-amber-300 bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200/50 backdrop-blur-md">
-            <UtensilsCrossed className="w-3.5 h-3.5" />
-            <span>三餐四季 · 人间烟火气</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-light tracking-tight text-slate-800 dark:text-slate-100 font-serif">
-            我们的美食日记
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-light">
-            热气腾腾的饭菜与对坐微笑的眼神。已打卡 {historyList.length} 顿烟火，尚有 {wishlist.length} 个想吃清单待奔赴。
-          </p>
-        </div>
+    <div className="relative max-w-7xl mx-auto px-4 sm:px-8 py-8 sm:py-12 space-y-8 animate-fadeIn">
+      {/* 4K 暖冬咖啡馆主题封面 + 全屏沉浸柔焦背景 */}
+      <ExhibitionCover
+        coverImage="/winter-cafe-hd.jpg"
+        badge="☕ 三餐四季 · WARM RECIPE JOURNAL"
+        englishTag="CHAPTER 02 // CULINARY MEMORIES"
+        title="我们的美食日记"
+        subtitle={`热气腾腾的饭菜与对坐微笑的眼神。已打卡 ${historyList.length} 顿烟火，尚有 ${wishlist.length} 个想吃清单待奔赴。`}
+        actions={
+          <button
+            onClick={() => {
+              setIsWishlist(tab === "wishlist");
+              setAddModalOpen(true);
+            }}
+            className="btn-shoujo-primary px-6 py-2.5 rounded-full text-xs font-serif-sc font-medium tracking-wider cursor-pointer flex items-center gap-2"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>记录一次美味</span>
+          </button>
+        }
+      />
 
-        <button
-          onClick={() => {
-            setIsWishlist(tab === "wishlist");
-            setAddModalOpen(true);
-          }}
-          className="px-5 py-2.5 rounded-full text-xs font-medium text-white bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 shadow-lg shadow-amber-500/20 transition cursor-pointer flex items-center gap-1.5 border-none self-start md:self-auto"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          <span>记录一次美味</span>
-        </button>
-      </div>
-
-      {/* 选项卡切换 */}
-      <div className="flex items-center gap-2">
+      {/* 少女感选项卡切换 */}
+      <div className="relative z-10 flex items-center gap-2.5">
         <button
           onClick={() => setTab("history")}
-          className={`px-4 py-2 rounded-full text-xs font-medium transition cursor-pointer border-none outline-none flex items-center gap-1.5 ${
-            tab === "history"
-              ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-sm"
-              : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200"
+          className={`px-5 py-2 rounded-full text-xs font-serif-sc tracking-wider cursor-pointer outline-none flex items-center gap-1.5 ${
+            tab === "history" ? "btn-shoujo-pill-active" : "btn-shoujo-pill-idle"
           }`}
         >
           <UtensilsCrossed className="w-3.5 h-3.5" />
@@ -148,10 +141,8 @@ export default function FoodView() {
         </button>
         <button
           onClick={() => setTab("wishlist")}
-          className={`px-4 py-2 rounded-full text-xs font-medium transition cursor-pointer border-none outline-none flex items-center gap-1.5 ${
-            tab === "wishlist"
-              ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-sm"
-              : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200"
+          className={`px-5 py-2 rounded-full text-xs font-serif-sc tracking-wider cursor-pointer outline-none flex items-center gap-1.5 ${
+            tab === "wishlist" ? "btn-shoujo-pill-active" : "btn-shoujo-pill-idle"
           }`}
         >
           <Bookmark className="w-3.5 h-3.5" />
@@ -161,7 +152,7 @@ export default function FoodView() {
 
       {/* 真实空状态或美食卡片列表 */}
       {currentList.length === 0 ? (
-        <div className="p-16 sm:p-20 text-center rounded-3xl bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-dashed border-slate-300 dark:border-white/10 text-slate-400 space-y-4 max-w-2xl mx-auto">
+        <div className="relative z-10 p-14 sm:p-20 text-center rounded-[2rem] glass-crystal border border-pink-200/25 text-slate-300 space-y-5 max-w-2xl mx-auto">
           <div className="w-16 h-16 rounded-3xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/50 flex items-center justify-center mx-auto text-amber-500">
             <UtensilsCrossed className="w-8 h-8" />
           </div>

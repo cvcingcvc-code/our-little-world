@@ -8,8 +8,6 @@ import {
   Trophy,
   Mail,
   Users2,
-  Lock,
-  Unlock,
   Snowflake,
   Sun,
   Moon,
@@ -49,7 +47,6 @@ interface NavigationProps {
 
 export default function Navigation({ activeTab, onTabChange }: NavigationProps) {
   const {
-    isAuthenticated,
     isNightMode,
     toggleNightMode,
     isSnowing,
@@ -251,26 +248,13 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
               {isNightMode ? <Sun className="w-4 h-4 text-[#FFE3B5]" /> : <Moon className="w-4 h-4 text-[#65548D]" />}
             </button>
 
-            {/* 私人权限状态胶囊 */}
+            {/* 专属空间纪念设置按钮（已取消访客拦截，直登完整体验） */}
             <button
               onClick={() => setAuthModalOpen(true)}
-              className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-serif-sc transition cursor-pointer border outline-none ${
-                isAuthenticated
-                  ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-200 border-emerald-400/45 shadow-sm"
-                  : "bg-[var(--theme-surface-glass)] text-[var(--theme-text-secondary)] hover:text-[var(--theme-text-primary)] border-[var(--theme-border-crystal)]"
-              }`}
+              className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-serif-sc transition cursor-pointer border outline-none bg-[#F6A9CD]/22 dark:bg-[#F6A9CD]/20 text-[#8B2B5C] dark:text-[#FFE3EB] border-[#F6A9CD]/60 hover:bg-[#F6A9CD]/35 shadow-sm"
             >
-              {isAuthenticated ? (
-                <>
-                  <Unlock className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-300" />
-                  <span>专属模式</span>
-                </>
-              ) : (
-                <>
-                  <Lock className="w-3.5 h-3.5 text-[#F47FA9]" />
-                  <span>访客模式</span>
-                </>
-              )}
+              <Heart className="w-3.5 h-3.5 text-[#F47FA9] fill-[#F47FA9]" />
+              <span>专属空间</span>
             </button>
 
             {/* 移动端汉堡菜单触发器 */}
@@ -362,8 +346,8 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
                 }}
                 className="w-full py-2.5 px-4 rounded-full btn-shoujo-glass text-xs flex items-center justify-center gap-2 cursor-pointer"
               >
-                {isAuthenticated ? <Unlock className="w-3.5 h-3.5 text-emerald-300" /> : <Lock className="w-3.5 h-3.5 text-pink-300" />}
-                <span>{isAuthenticated ? "当前处于专属模式" : "验证私密通行码"}</span>
+                <Heart className="w-3.5 h-3.5 text-[#F47FA9] fill-[#F47FA9]" />
+                <span>专属空间 · 纪念设置</span>
               </button>
             </div>
           </div>

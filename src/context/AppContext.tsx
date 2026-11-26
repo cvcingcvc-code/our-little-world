@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { verifyPasscode, checkClientAuth, setClientAuth } from "@/lib/auth";
+import { verifyPasscode, setClientAuth } from "@/lib/auth";
 
 interface AppContextType {
   // 权限与模式
@@ -25,16 +25,18 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  // 已取消访客模式限制，访问即直接进入完整双人专属体验状态
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
   const [isNightMode, setIsNightMode] = useState<boolean>(false);
   const [isSnowing, setIsSnowing] = useState<boolean>(true);
   const [isLowPerformance, setIsLowPerformance] = useState<boolean>(false);
   const [isBgmPlaying, setIsBgmPlaying] = useState<boolean>(false);
   const [refreshKey, setRefreshKey] = useState<number>(0);
 
-  // 初始化读取本地偏好与登录态
+  // 初始化读取本地视觉偏好（登录态始终保持直登专属体验）
   useEffect(() => {
-    setIsAuthenticated(checkClientAuth());
+    setClientAuth(true);
+    setIsAuthenticated(true);
 
     const savedNight = localStorage.getItem("olw_theme_night");
     if (savedNight) setIsNightMode(savedNight === "true");

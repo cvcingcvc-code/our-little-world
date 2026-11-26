@@ -5,6 +5,7 @@ import { useApp } from "@/context/AppContext";
 import Navigation, { NavTab } from "@/components/common/Navigation";
 import GlobalBackground from "@/components/common/GlobalBackground";
 import Snowfall from "@/components/common/Snowfall";
+import FairyCursorTrail from "@/components/common/FairyCursorTrail";
 import BackgroundAudio from "@/components/common/BackgroundAudio";
 import OpeningCurtain from "@/components/common/OpeningCurtain";
 
@@ -45,6 +46,9 @@ export default function AppHome() {
 
       {/* Layer 05: 少女感复合雪花/星芒/爱心/花瓣/蝴蝶粒子引擎 */}
       <Snowfall />
+
+      {/* 仙女棒流光丝带与星尘爱心鼠标滑动/点击特效 */}
+      <FairyCursorTrail />
 
       {/* 纯净治愈系背景音乐控制器 */}
       <BackgroundAudio />
